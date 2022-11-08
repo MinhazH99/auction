@@ -102,7 +102,6 @@ ADD FOREIGN KEY (user_id) REFERENCES users(user_id),
 ADD FOREIGN KEY (category_id) REFERENCES categories(category_id); 
 
 ALTER TABLE categories
-ADD FOREIGN KEY (item_id) REFERENCES items(item_id),
 ADD FOREIGN KEY (user_id) REFERENCES users(user_id); 
 
 
