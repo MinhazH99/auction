@@ -25,21 +25,21 @@ include_once("header.php")?>
   <div class="form-group row">
     <label for="firstName" class="col-sm-2 col-form-label text-right">Name</label>
 	<div class="col-sm-10">
-      <input required type="text" class="form-control" name="firstName" id="firstName" placeholder="Name">
+      <input required maxlength="30" type="text" class="form-control" name="firstName" id="firstName" placeholder="Name">
       <small id="firstNameHelp" class="form-text text-muted"><span class="text-danger">* Required.</span></small>
 	</div>
   </div>
   <div class="form-group row">
     <label for="lastName" class="col-sm-2 col-form-label text-right">Surname</label>
 	<div class="col-sm-10">
-      <input required type="text" class="form-control" name="lastName" id="lastName" placeholder="Surname">
+      <input required maxlength="30" type="text" class="form-control" name="lastName" id="lastName" placeholder="Surname">
       <small id="lastNameHelp" class="form-text text-muted"><span class="text-danger">* Required.</span></small>
 	</div>
   </div>
   <div class="form-group row">
     <label for="email" class="col-sm-2 col-form-label text-right">Email</label>
 	<div class="col-sm-10">
-      <input required type="email" class="form-control" name="email" id="regEmail" placeholder="Email">
+      <input required maxlength="50" type="email" class="form-control" name="email" id="regEmail" placeholder="Email">
       <small id="regEmailHelp" class="form-text text-muted"><span class="text-danger">* Required.</span></small>
 	</div>
   </div>

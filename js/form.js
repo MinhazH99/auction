@@ -36,7 +36,7 @@ function field_error(id, error_msg){
 
 //check name fields
 function check_name(id){
-    name_regex = /^[a-zA-Z-'.]+$/; // TODO adjust regex
+    name_regex = /^[a-zA-Z-/'.]+$/; // TODO adjust regex
     var input = element(id);
     if( input.value.match(name_regex) == null ){
         field_error(id, "Please enter a valid name");
