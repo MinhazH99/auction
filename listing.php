@@ -1,31 +1,52 @@
 <?php include_once("header.php")?>
 <?php require("utilities.php")?>
+<?php require("requirements/dbInformation.php")?> 
 
 <?php
-  // Get info from the URL:
+  // Get info from the URL:   
   $item_id = $_GET['item_id'];
 
+  if (!$item_id){
+    header("Location: browse.php");
+  }
+
   // TODO: Use item_id to make a query to the database.
+  $query = "SELECT auctions.starting_price, auctions.expirationDate, auctions.reserve_price, items.item_name, items.item_desc FROM auctions JOIN items ON auctions.item_id = items.item_id WHERE auctions.item_id = {$item_id}";
+  $resultObj = $connection->query($query);
+  $row = $resultObj->fetch_assoc();
 
-  // DELETEME: For now, using placeholder data.
-  $title = "Placeholder title";
-  $description = "Description blah blah blah";
-  $current_price = 30.50;
-  $num_bids = 1;
-  $end_time = new DateTime('2020-11-02T00:00:00');
+  if (!$row){
+    echo "item not found!";
+    die();
+  }
 
-  // TODO: Note: Auctions that have ended may pull a different set of data,
-  //       like whether the auction ended in a sale or was cancelled due
-  //       to lack of high-enough bids. Or maybe not.
-  
-  // Calculate time to auction end:
+  // item details.
+  $title = $row['item_name'];
+  $description = $row['item_desc'];
+
+  /*  
+  TODO: Note: Auctions that have ended may pull a different set of data,
+  like whether the auction ended in a sale or was cancelled due
+  to lack of high-enough bids. Or maybe not. Calculate time to auction end: 
+  */
+
+  $end_time = new DateTime($row['expirationDate']);
   $now = new DateTime();
   
   if ($now < $end_time) {
     $time_to_end = date_diff($now, $end_time);
     $time_remaining = ' (in ' . display_time_remaining($time_to_end) . ')';
   }
+
+  // query from the bids table
+  // add in 
+
+  // complete once we've figured out where to pull current price
+  $current_price = 30.50;
+  $num_bids = 1000;
   
+
+
   // TODO: If the user has a session, use it to make a query to the database
   //       to determine if the user is already watching this item.
   //       For now, this is hardcoded.
@@ -69,12 +90,24 @@
   <div class="col-sm-4"> <!-- Right col with bidding info -->
 
     <p>
+    
+    <!-- place holder data for now -->
+    <?php $sold = TRUE;
+    $sold_price = 400;
+    ?>
+
 <?php if ($now > $end_time): ?>
      This auction ended <?php echo(date_format($end_time, 'j M H:i')) ?>
      <!-- TODO: Print the result of the auction here? -->
+     <?php if ($sold){ ?>
+      <p class="lead"><?=$title?> sold at £<?php echo(number_format($sold_price, 2)) ?></p>
+     <?php } else ?>
+      <p class="lead"><?=$title?> did not sell at £<?=$current_price?></p>
+
+
 <?php else: ?>
-     Auction ends <?php echo(date_format($end_time, 'j M H:i') . $time_remaining) ?></p>  
-    <p class="lead">Current bid: £<?php echo(number_format($current_price, 2)) ?></p>
+     Auction ends <?php echo(date_format($end_time, 'j M H:i') . $time_remaining) ?></p>
+        <p class="lead">Current bid: £<?php echo(number_format($current_price, 2)) ?></p>
 
     <!-- Bidding form -->
     <form method="POST" action="place_bid.php">
@@ -84,6 +117,7 @@
         </div>
 	    <input type="number" class="form-control" id="bid">
       </div>
+      <div></div>
       <button type="submit" class="btn btn-primary form-control">Place bid</button>
     </form>
 <?php endif ?>
@@ -93,7 +127,7 @@
 
 </div> <!-- End of row #2 -->
 
-
+<?php $resultObj->close(); ?>
 
 <?php include_once("footer.php")?>
 
