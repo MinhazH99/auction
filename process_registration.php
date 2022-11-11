@@ -3,8 +3,12 @@
 // an account. Notify user of success/failure and redirect/give navigation 
 // options.
 
-
 include_once("header.php");
+
+if(empty($_POST)){
+    header("Location: register.php");
+    exit();    
+}
 
 // check if the fields exist or are empty.
 if ( empty($_POST['firstName']) ||
@@ -52,7 +56,6 @@ $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
 // construct the sql query as a variable
 $query = "INSERT INTO users (email, first_name, last_name, password) VALUES ('$email', '$firstname', '$lastname', '$password');";
 
-//die($query);
 
 // actually run the sql query
 $result = mysqli_query($connection,$query);
