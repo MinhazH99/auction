@@ -3,8 +3,6 @@
 // an account. Notify user of success/failure and redirect/give navigation 
 // options.
 
-include_once("header.php");
-
 if(empty($_POST)){
     header("Location: register.php");
     exit();    
@@ -30,6 +28,7 @@ if ( filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL) === false ){
 }
 
 
+
 // database connection variables
 define("HOST","localhost" );
 define("DBUSER","root" );
@@ -41,7 +40,7 @@ $connection = mysqli_connect(HOST, DBUSER, DBPASS, DBNAME);
 
 // Check connection
 if (mysqli_connect_errno()) {
-    die("Oops... Error connecting to MySQL server: " . mysqli_error(). "\nPlease <a href =\"register.php\">go back</a> and try again later.");
+    die("Oops... An unexpected error occurred.<br>Please <a href =\"register.php\">go back</a> and try again later.");
 
 }
 
@@ -53,22 +52,53 @@ $email = mysqli_real_escape_string($connection, $_POST['email']);
 // hash the password for storage
 $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
-// construct the sql query as a variable
-$query = "INSERT INTO users (email, first_name, last_name, password) VALUES ('$email', '$firstname', '$lastname', '$password');";
+// check if user email already in use
+$email_exists = mysqli_query($connection, "SELECT email FROM users WHERE email = '".$email."';");
 
-
-// actually run the sql query
-$result = mysqli_query($connection,$query);
-
-// check if it worked
-if (!$result) {
-    echo "There was a problem with registering your account: " .mysqli_error($connection)."<br>Please <a href =\"register.php\">go back</a> and try submitting again.";
+if (!$email_exists) {
+    echo "There was a problem with registering your account.<br>Please <a href =\"register.php\">go back</a> and try submitting again.";
     die();
 }
-else {
-    echo "Hi ". htmlspecialchars($firstname) . "<br>Your account is successfully created! Why not go ahead and start browsing:)";
+
+else if ( mysqli_num_rows($email_exists) > 0 ){    
+    echo "Email already in use. Please <a href =\"register.php\">go back</a> and register with another email.";
 }
+
+else{   
+    // if email not already in use, do the following code to create a new user account
+    $query = "INSERT INTO users (email, first_name, last_name, password) VALUES ('$email', '$firstname', '$lastname', '$password');";
+
+    // actually run the sql query
+    $result = mysqli_query($connection,$query);
+
+    // check if it worked
+    if (!$result) {
+        echo "There was a problem with registering your account.<br>Please <a href =\"register.php\">go back</a> and try submitting again.";
+        exit();
+    }
+    else { 
+
+        // get the user data from database to start a logged in session
+        $get_user_data = mysqli_query($connection, "SELECT * FROM users WHERE email = '".$email."';");        
+
+        if (!$get_user_data) {
+            echo "An unexpected error occurred.<br>Please <a href =\"index.php\">go back</a> and try submitting again.";
+            exit();
+        }    
+
+        $row = mysqli_fetch_assoc($get_user_data);
+
+
+        session_start();
+        $_SESSION['logged_in'] = true;
+        $_SESSION['email'] = $row['email'];
+        $_SESSION['user_id'] = $row['user_id'];       
+        echo('<div class="text-center">Hi '.htmlspecialchars($firstname).','.'</br>Your account is successfully created!</br>You will be redirected to homepage shortly.</br>Why not go ahead and start browsing:)</div>');
+        header("refresh:8;url=index.php");
+    }
+
+}
+
 
 mysqli_close($connection);
 ?>
-<?php include_once("footer.php")?>

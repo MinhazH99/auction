@@ -4,8 +4,8 @@
   // ONLY after the user's login credentials have been verified via a 
   // database query.
   session_start();
-  $_SESSION['logged_in'] = false;
-  $_SESSION['account_type'] = 'seller';
+  // $_SESSION['logged_in'] = false;
+  // $_SESSION['account_type'] = 'seller';
 ?>
 
 
@@ -54,24 +54,44 @@
       <a class="nav-link" href="browse.php">Browse</a>
     </li>
 <?php
-  if (isset($_SESSION['account_type']) && $_SESSION['account_type'] == 'buyer') {
+
+
+//since each user is a buyer and seller at the same time, the following is established
+if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] == true) {
   echo('
 	<li class="nav-item mx-1">
       <a class="nav-link" href="mybids.php">My Bids</a>
     </li>
 	<li class="nav-item mx-1">
       <a class="nav-link" href="recommendations.php">Recommended</a>
-    </li>');
-  }
-  if (isset($_SESSION['account_type']) && $_SESSION['account_type'] == 'seller') {
-  echo('
-	<li class="nav-item mx-1">
-      <a class="nav-link" href="mylistings.php">My Listings</a>
     </li>
-	<li class="nav-item ml-3">
-      <a class="nav-link btn border-light" href="create_auction.php">+ Create auction</a>
-    </li>');
+    <li class="nav-item mx-1">
+    <a class="nav-link" href="mylistings.php">My Listings</a>
+  </li>
+<li class="nav-item ml-3">
+    <a class="nav-link btn border-light" href="create_auction.php">+ Create auction</a>
+  </li>');
+      
   }
+
+  // if (isset($_SESSION['account_type']) && $_SESSION['account_type'] == 'buyer') {
+  // echo('
+	// <li class="nav-item mx-1">
+  //     <a class="nav-link" href="mybids.php">My Bids</a>
+  //   </li>
+	// <li class="nav-item mx-1">
+  //     <a class="nav-link" href="recommendations.php">Recommended</a>
+  //   </li>');
+  // }
+  // if (isset($_SESSION['account_type']) && $_SESSION['account_type'] == 'seller') {
+  // echo('
+	// <li class="nav-item mx-1">
+  //     <a class="nav-link" href="mylistings.php">My Listings</a>
+  //   </li>
+	// <li class="nav-item ml-3">
+  //     <a class="nav-link btn border-light" href="create_auction.php">+ Create auction</a>
+  //   </li>');
+  // }
 ?>
   </ul>
 </nav>
@@ -91,13 +111,13 @@
         <form method="POST" action="login_result.php">
           <div class="form-group">
             <label for="email">Email</label>
-            <input type="text" class="form-control" id="email" placeholder="Email">
+            <input required name="email" type="text" class="form-control" id="email" placeholder="Email">
           </div>
           <div class="form-group">
             <label for="password">Password</label>
-            <input type="password" class="form-control" id="password" placeholder="Password">
+            <input required name="password" type="password" class="form-control" id="password" placeholder="Password">
           </div>
-          <button type="submit" class="btn btn-primary form-control">Sign in</button>
+          <button name="login-submit" type="submit" class="btn btn-primary form-control">Sign in</button>
         </form>
         <div class="text-center">or <a href="register.php">create an account</a></div>
       </div>
