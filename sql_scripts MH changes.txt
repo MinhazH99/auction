@@ -1,0 +1,106 @@
+DROP DATABASE auction;
+
+CREATE DATABASE auction
+	DEFAULT CHARACTER SET utf8
+	DEFAULT COLLATE utf8_general_ci;
+
+--  GRANT SELECT, UPDATE, INSERT, DELETE
+--  	ON auction.*
+--  	TO 'admin1'@'localhost'
+--  	IDENTIFIED BY 'password1';
+
+USE auction;
+
+CREATE TABLE users(
+	user_id INT UNSIGNED AUTO_INCREMENT NOT NULL,
+	email VARCHAR(50) NOT NULL UNIQUE,
+	first_name VARCHAR(30) NOT NULL,
+	last_name VARCHAR(30) NOT NULL,
+	password VARCHAR(255) NOT NULL,
+	reg_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY(user_id)
+);
+
+
+CREATE TABLE auctions(
+	 auction_id INT UNSIGNED AUTO_INCREMENT NOT NULL,	 
+	 -- current_price DECIMAL(10,2) UNSIGNED NOT NULL, --  highest bid price
+	 item_name VARCHAR(100) NOT NULL,
+	 item_desc VARCHAR(2000) NOT NULL,
+	 image LONGBLOB,
+	 item_condition ENUM('New', 'Used'), --  have to modify create_auction.php page and the forum
+	 starting_price DECIMAL(10,2) UNSIGNED NOT NULL,
+	 reserve_price DECIMAL(10,2) UNSIGNED NOT NULL,
+	 expirationDate DATETIME,
+	 auction_status ENUM('Open', 'Closed') NOT NULL,
+	 watch_id INT,
+	 category_id INT,
+	 user_id INT,
+	 PRIMARY KEY(auction_id)
+
+	 --  how to find the winner of an auction and update auction table??
+	 --  can show the total number for current bids for an auction on the website via a mysql query. "X" many people have bid on this
+
+);
+
+
+
+CREATE TABLE bids(
+	bid_id INT UNSIGNED AUTO_INCREMENT NOT NULL,
+	bid_price DECIMAL(10,2) UNSIGNED NOT NULL,	
+	auction_id INT,
+	user_id INT,
+	user_status ENUM('Winner', 'Loser') NOT NULL,
+	bid_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY(bid_id)
+);
+
+
+
+CREATE TABLE categories(
+	category_id INT UNSIGNED AUTO_INCREMENT NOT NULL,
+	category_name ENUM('Technology', 'Toys, Children & Baby', 'Clothes, Shoes, Jewellery and Accessories', 'Sports & Outdoor', 'Health & Beauty') NOT NULL,
+	PRIMARY KEY(category_id)
+);
+
+CREATE TABLE reviews(
+	review_id INT UNSIGNED AUTO_INCREMENT NOT NULL,
+	auction_id INT,
+	rating INT UNSIGNED NOT NULL, --  ratings between 1 to 5, validate on the website with Javascript & PHP
+	user_id INT,
+	comment VARCHAR(2000),
+	PRIMARY KEY(review_id)
+);
+
+CREATE TABLE watch(
+	watch_id INT UNSIGNED AUTO_INCREMENT NOT NULL,
+	user_id INT,
+	auction_id INT,
+	PRIMARY KEY(watch_id)
+);
+
+
+
+ALTER TABLE auctions
+ADD FOREIGN KEY (watch_id) REFERENCES watch(watch_id),
+ADD FOREIGN KEY (category_id) REFERENCES categories(category_id); 
+
+
+ALTER TABLE bids
+ADD FOREIGN KEY (auction_id) REFERENCES auctions(auction_id),
+ADD FOREIGN KEY (user_id) REFERENCES users(user_id); 
+
+ALTER TABLE reviews
+ADD FOREIGN KEY (auction_id) REFERENCES auctions(auction),
+ADD FOREIGN KEY (user_id) REFERENCES users(user_id); 
+
+ALTER TABLE watch
+ADD FOREIGN KEY (user_id) REFERENCES users(user_id),
+ADD FOREIGN KEY (auction_id) REFERENCES auctions(auction_id);
+
+INSERT INTO `categories` (`category_id`, `category_name`) VALUES (NULL, 'Technology');
+INSERT INTO `categories` (`category_id`, `category_name`) VALUES (NULL, 'Toys, Children & Baby');
+INSERT INTO `categories` (`category_id`, `category_name`) VALUES (NULL, 'Clothes, Shoes, Jewellery and Accessories');
+INSERT INTO `categories` (`category_id`, `category_name`) VALUES (NULL, 'Sports & Outdoor');
+INSERT INTO `categories` (`category_id`, `category_name`) VALUES (NULL, 'Health & Beauty');
+
