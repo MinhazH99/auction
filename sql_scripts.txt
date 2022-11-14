@@ -65,7 +65,7 @@ CREATE TABLE items(
 
 CREATE TABLE categories(
 	category_id INT UNSIGNED AUTO_INCREMENT NOT NULL,
-	category_name ENUM('Technology', 'Toys', 'Sports') NOT NULL,
+	category_name ENUM('Technology', 'Toys, Children & Baby', 'Clothes, Shoes, Jewellery and Accessories', 'Sports & Outdoor', 'Health & Beauty') NOT NULL,
 	PRIMARY KEY(category_id)
 );
 
@@ -108,3 +108,10 @@ ADD FOREIGN KEY (user_id) REFERENCES users(user_id);
 ALTER TABLE watch
 ADD FOREIGN KEY (user_id) REFERENCES users(user_id),
 ADD FOREIGN KEY (auction_id) REFERENCES auctions(auction_id);
+
+INSERT INTO `categories` (`category_id`, `category_name`) VALUES (NULL, 'Technology');
+INSERT INTO `categories` (`category_id`, `category_name`) VALUES (NULL, 'Toys, Children & Baby');
+INSERT INTO `categories` (`category_id`, `category_name`) VALUES (NULL, 'Clothes, Shoes, Jewellery and Accessories');
+INSERT INTO `categories` (`category_id`, `category_name`) VALUES (NULL, 'Sports & Outdoor');
+INSERT INTO `categories` (`category_id`, `category_name`) VALUES (NULL, 'Health & Beauty');
+
