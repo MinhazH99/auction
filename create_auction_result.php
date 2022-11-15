@@ -51,7 +51,7 @@ $result = mysqli_query($connection,$query) or die("Error: items table");
 
 
 // If all is successful, let user know.
-echo('<div class="text-center">Auction successfully created! <a href="FIXME">View your new listing.</a></div>');
+echo('<div class="text-center">Auction successfully created! <a href="http://localhost/auction/mylistings.php">View your new listing.</a></div>');
 
 mysqli_close($connection);
 
