@@ -30,7 +30,7 @@
 
   $user = $_SESSION['user_id'];
 
-  $user_listings = "SELECT auction_id,item_name, item_desc, item_condition, category_id, expirationDate, reserve_price,starting_price FROM auctions WHERE user_id = '$user'";
+  $user_listings = "SELECT auction_id,item_name,item_desc,expirationDate,starting_price FROM auctions WHERE user_id = '$user'";
 
   $user_listings_res = mysqli_query($connection,$user_listings);
 
