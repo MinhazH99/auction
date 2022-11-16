@@ -25,13 +25,17 @@ CREATE TABLE users(
 CREATE TABLE auctions(
 	 auction_id INT UNSIGNED AUTO_INCREMENT NOT NULL,	 
 	 -- current_price DECIMAL(10,2) UNSIGNED NOT NULL, --  highest bid price
-	 item_id INT,
+	 item_name VARCHAR(100) NOT NULL,
+	 item_desc VARCHAR(2000) NOT NULL,
+	 image LONGBLOB,
+	 item_condition ENUM('New', 'Used'), --  have to modify create_auction.php page and the forum
 	 starting_price DECIMAL(10,2) UNSIGNED NOT NULL,
 	 reserve_price DECIMAL(10,2) UNSIGNED NOT NULL,
 	 expirationDate DATETIME,
 	 auction_status ENUM('Open', 'Closed') NOT NULL,
 	 watch_id INT,
 	 category_id INT,
+	 user_id INT,
 	 PRIMARY KEY(auction_id)
 
 	 --  how to find the winner of an auction and update auction table??
@@ -51,16 +55,6 @@ CREATE TABLE bids(
 	PRIMARY KEY(bid_id)
 );
 
-CREATE TABLE items(
-	item_id INT UNSIGNED AUTO_INCREMENT NOT NULL,
-	item_name VARCHAR(100) NOT NULL,
-	item_desc VARCHAR(2000) NOT NULL,
-	category_id INT,
-	user_id INT,
-	item_condition ENUM('New', 'Used'), --  have to modify create_auction.php page and the forum
-	image LONGBLOB NOT NULL,
-	PRIMARY KEY(item_id)
-);
 
 
 CREATE TABLE categories(
@@ -71,7 +65,7 @@ CREATE TABLE categories(
 
 CREATE TABLE reviews(
 	review_id INT UNSIGNED AUTO_INCREMENT NOT NULL,
-	item_id INT,
+	auction_id INT,
 	rating INT UNSIGNED NOT NULL, --  ratings between 1 to 5, validate on the website with Javascript & PHP
 	user_id INT,
 	comment VARCHAR(2000),
@@ -88,7 +82,6 @@ CREATE TABLE watch(
 
 
 ALTER TABLE auctions
-ADD FOREIGN KEY (item_id) REFERENCES items(item_id),
 ADD FOREIGN KEY (watch_id) REFERENCES watch(watch_id),
 ADD FOREIGN KEY (category_id) REFERENCES categories(category_id); 
 
@@ -97,12 +90,8 @@ ALTER TABLE bids
 ADD FOREIGN KEY (auction_id) REFERENCES auctions(auction_id),
 ADD FOREIGN KEY (user_id) REFERENCES users(user_id); 
 
-ALTER TABLE items
-ADD FOREIGN KEY (user_id) REFERENCES users(user_id),
-ADD FOREIGN KEY (category_id) REFERENCES categories(category_id); 
-
 ALTER TABLE reviews
-ADD FOREIGN KEY (item_id) REFERENCES items(item_id),
+ADD FOREIGN KEY (auction_id) REFERENCES auctions(auction),
 ADD FOREIGN KEY (user_id) REFERENCES users(user_id); 
 
 ALTER TABLE watch
