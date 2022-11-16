@@ -29,9 +29,11 @@
         <label for="cat" class="sr-only">Search within:</label> <!-- for screen readers only -->
         <select name="cat" class="form-control" id="cat">
           <option selected value="all">All categories</option>
-          <option value="Sports">Sports</option>
+          <option value="Clothes, Shoes, Jewellery and Accessories">Clothes, Shoes, Jewellery and Accessories</option>
+          <option value="Health & Beauty">Health & Beauty</option>
+          <option value="Sports & Outdoor">Sports & Outdoor</option>
           <option value="Technology">Technology</option>
-          <option value="Toys">Toys</option> <!-- drop down list of category options on website -->
+          <option value="Toys, Children & Baby">Toys, Children & Baby</option> <!-- drop down list of category options on website -->
         </select>
       </div>
     </div>
@@ -57,6 +59,7 @@
 
 <?php
   $num_queries=1;
+  $now = new DateTime();
   #isset checks whether the order_by variable has been set after it has been submitted using 'get'
   if (!isset($_GET['order_by'])) {
     
@@ -86,27 +89,21 @@
     $connection = mysqli_connect('localhost','root','','auction')
     or die('Error connecting to MySQL server: ' . mysqli_error());
   
-    $keyword_query = "SELECT items.item_id, item_name, item_desc, item_condition, category_name, expirationDate, reserve_price
-    FROM items, categories, auctions
-    WHERE categories.category_id = items.category_id
-    AND auctions.item_id = items.item_id
-    AND (INSTR(items.item_desc, TRIM(' ' FROM '{$keyword}')) 
-    OR INSTR(items.item_name, TRIM(' ' FROM '{$keyword}')) )> 0
+    $keyword_query = "SELECT auction_id, item_name, item_desc, item_condition, category_name, expirationDate, reserve_price
+    FROM categories, auctions
+    WHERE categories.category_id = auctions.category_id
+    AND (INSTR(auctions.item_desc, TRIM(' ' FROM '{$keyword}')) 
+    OR INSTR(auctions.item_name, TRIM(' ' FROM '{$keyword}')) )> 0
     ORDER BY 
     CASE WHEN '{$ordering}' = 'pricelow' THEN auctions.reserve_price END ASC,
     CASE WHEN '{$ordering}' = 'pricehigh' THEN auctions.reserve_price END DESC,
     CASE WHEN '{$ordering}' = 'date' THEN auctions.expirationDate END ASC";
 
-    $count_query = "SELECT COUNT(items.item_id) AS 'count'
-    FROM items, categories, auctions
-    WHERE categories.category_id = items.category_id
-    AND auctions.item_id = items.item_id
-    AND (INSTR(items.item_desc, TRIM(' ' FROM '{$keyword}')) 
-    OR INSTR(items.item_name, TRIM(' ' FROM '{$keyword}')) )> 0
-    ORDER BY 
-    CASE WHEN '{$ordering}' = 'pricelow' THEN auctions.reserve_price END ASC,
-    CASE WHEN '{$ordering}' = 'pricehigh' THEN auctions.reserve_price END DESC,
-    CASE WHEN '{$ordering}' = 'date' THEN auctions.expirationDate END ASC";
+    $count_query = "SELECT COUNT(auctions.auction_id) AS 'count'
+    FROM categories, auctions
+    WHERE categories.category_id = auctions.category_id
+    AND (INSTR(auctions.item_desc, TRIM(' ' FROM '{$keyword}')) 
+    OR INSTR(auctions.item_name, TRIM(' ' FROM '{$keyword}')) )> 0";
 
 
 
@@ -123,12 +120,17 @@
     while ($keyword_row = mysqli_fetch_array($keyword_result))
     {
 
-    $item_id= $keyword_row['item_id'];
+    $item_id= $keyword_row['auction_id'];
     $title = $keyword_row['item_name'];
     $description= $keyword_row['item_desc'];
-    $current_price= $keyword_row['reserve_price'];
+    $current_price= $keyword_row['reserve_price']; #CHANGE THIS TO CURRENT
     $end_date= new DateTime($keyword_row['expirationDate']);
-    $num_bids = 1;
+    $num_bids = 1; #CHANGE THIS TO CURRENT NUMBER OF BIDA
+
+    if ($now > $end_date) {
+      continue;
+      
+    }
   
 // This uses a function defined in utilities.php
     print_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_date);
@@ -145,29 +147,24 @@
     $connection = mysqli_connect('localhost','root','','auction')
     or die('Error connecting to MySQL server: ' . mysqli_error());
   
-    $keyword_query = "SELECT items.item_id, item_name, item_desc, item_condition, category_name, expirationDate, reserve_price
-    FROM items, categories, auctions
-    WHERE categories.category_id = items.category_id
+    $keyword_query = "SELECT auctions.auction_id, item_name, item_desc, item_condition, category_name, expirationDate, reserve_price
+    FROM categories, auctions
+    WHERE categories.category_id = auctions.category_id
     AND categories.category_name = '{$category}'
-    AND auctions.item_id = items.item_id
-    AND (INSTR(items.item_desc, TRIM(' ' FROM '{$keyword}')) 
-    OR INSTR(items.item_name, TRIM(' ' FROM '{$keyword}')) )> 0
+    
+    AND (INSTR(auctions.item_desc, TRIM(' ' FROM '{$keyword}')) 
+    OR INSTR(auctions.item_name, TRIM(' ' FROM '{$keyword}')) )> 0
     ORDER BY 
     CASE WHEN '{$ordering}' = 'pricelow' THEN auctions.reserve_price END ASC,
     CASE WHEN '{$ordering}' = 'pricehigh' THEN auctions.reserve_price END DESC,
     CASE WHEN '{$ordering}' = 'date' THEN auctions.expirationDate END ASC";
   
-    $count_query = "SELECT COUNT(items.item_id) AS 'count'
-    FROM items, categories, auctions
-    WHERE categories.category_id = items.category_id
+    $count_query = "SELECT COUNT(auctions.auction_id) AS 'count'
+    FROM categories, auctions
+    WHERE categories.category_id = auctions.category_id
     AND categories.category_name = '{$category}'
-    AND auctions.item_id = items.item_id
-    AND (INSTR(items.item_desc, TRIM(' ' FROM '{$keyword}')) 
-    OR INSTR(items.item_name, TRIM(' ' FROM '{$keyword}')) )> 0
-    ORDER BY 
-    CASE WHEN '{$ordering}' = 'pricelow' THEN auctions.reserve_price END ASC,
-    CASE WHEN '{$ordering}' = 'pricehigh' THEN auctions.reserve_price END DESC,
-    CASE WHEN '{$ordering}' = 'date' THEN auctions.expirationDate END ASC";
+    AND (INSTR(auctions.item_desc, TRIM(' ' FROM '{$keyword}')) 
+    OR INSTR(auctions.item_name, TRIM(' ' FROM '{$keyword}')) )> 0";
   
     $keyword_result = mysqli_query($connection, $keyword_query) 
       or die('Error making select users query: '. mysqli_error($connection));
@@ -183,12 +180,17 @@
     while ($keyword_row = mysqli_fetch_array($keyword_result))
     {
 
-    $item_id= $keyword_row['item_id'];
+    $item_id= $keyword_row['auction_id'];
     $title = $keyword_row['item_name'];
     $description= $keyword_row['item_desc'];
     $current_price= $keyword_row['reserve_price'];
     $end_date= new DateTime($keyword_row['expirationDate']);
     $num_bids = 1;
+
+    if ($now > $end_date) {
+      continue;
+      
+    }
   
 // This uses a function defined in utilities.php
     print_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_date);
