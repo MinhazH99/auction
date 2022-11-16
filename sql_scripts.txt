@@ -109,9 +109,10 @@ ALTER TABLE watch
 ADD FOREIGN KEY (user_id) REFERENCES users(user_id),
 ADD FOREIGN KEY (auction_id) REFERENCES auctions(auction_id);
 
+
+INSERT INTO `categories` (`category_id`, `category_name`) VALUES (NULL, 'Clothes, Shoes, Jewellery and Accessories');
+INSERT INTO `categories` (`category_id`, `category_name`) VALUES (NULL, 'Health & Beauty');
+INSERT INTO `categories` (`category_id`, `category_name`) VALUES (NULL, 'Sports & Outdoor');
 INSERT INTO `categories` (`category_id`, `category_name`) VALUES (NULL, 'Technology');
 INSERT INTO `categories` (`category_id`, `category_name`) VALUES (NULL, 'Toys, Children & Baby');
-INSERT INTO `categories` (`category_id`, `category_name`) VALUES (NULL, 'Clothes, Shoes, Jewellery and Accessories');
-INSERT INTO `categories` (`category_id`, `category_name`) VALUES (NULL, 'Sports & Outdoor');
-INSERT INTO `categories` (`category_id`, `category_name`) VALUES (NULL, 'Health & Beauty');
 
