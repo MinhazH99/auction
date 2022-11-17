@@ -51,13 +51,15 @@
   function isLoggedIn() { return isset($_SESSION['user_id']);}
 
   if (!isLoggedIn())
-  echo('
-  <li class="list-group-item d-flex justify-content-center">
-  <div class="p-2 mr-5"><h5><center>Please login</center></h5>
-  </div>
+    echo('
+    <li class="list-group-item d-flex justify-content-center">
+    <div class="p-2 mr-5"><h5><center>Please login</center></h5>
+    </div>
   
-  </li>'
-  );
+    </li>'
+  
+    );
+    die();
 
   // This page is for showing a user the auctions they've bid on.
   // It will be pretty similar to browse.php, except there is no search bar.
