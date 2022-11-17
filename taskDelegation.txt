@@ -1,7 +1,7 @@
 timeline:
-7-13: finish first week jobs
-14-16: finish second week jobs
-17-21: extra capabilities
+17-24: extra capabilities
+24 - 27: write-up (complete first draft)
+27 - 15: revist timeline
 
 
 User registration: --> Ali
@@ -43,22 +43,28 @@ common php functions:
 	register.php
     create_auction.php
     browse.php
+	login_result.php
+	logout.php
+	create_auction_result.php
+	mylistings.php
+	mybids.php
+	place_bid.php
+    listing.php
 
 
     INCOMPLETED:
-    login_result.php
-	logout.php
+   
 
-    create_auction_result.php
+   
 
+    CURRENTLY WORKING ON:
+	recommendations.php
+	watchlist_funcs.php
+	make website look peng    
+    
+    
 
-    CURRENTLY WORKING ON:    
-    mylistings.php
     
-    login_result.php
-	logout.php
     
-    mybids.php
     
-    place_bid.php
-    listing.php
+

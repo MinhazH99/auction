@@ -18,7 +18,8 @@
   function isLoggedIn() { return isset($_SESSION['user_id']);}
 
   if (!isLoggedIn())
-    echo 'Please login';
+    echo 'Please login'; /* add redirect */
+    die();
 
   // TODO: Perform a query to pull up their auctions.
   $host = "localhost";
