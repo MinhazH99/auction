@@ -4,14 +4,15 @@
 
 <?php
   // Get info from the URL:   
-  $item_id = $_GET['item_id'];
+  $item_id = $_GET['auction_id'];
 
   if (!$item_id){
-    header("Location: browse.php");
+    // header("Location: browse.php")
+    echo 'This item_id does not exist';
   }
 
   // TODO: Use item_id to make a query to the database.
-  $query = "SELECT auctions.starting_price, auctions.expirationDate, auctions.reserve_price, items.item_name, items.item_desc FROM auctions JOIN items ON auctions.item_id = items.item_id WHERE auctions.item_id = {$item_id}";
+  $query = "SELECT auctions.starting_price, auctions.expirationDate, auctions.reserve_price, auctions.item_name, auctions.item_desc FROM auctions WHERE auctions.auction_id = {$item_id}";
   $resultObj = $connection->query($query);
   $row = $resultObj->fetch_assoc();
 
@@ -41,17 +42,21 @@
   // query from the bids table
   // add in 
 
-  // complete once we've figured out where to pull current price
-  $current_price = 30.50;
-  $num_bids = 1000;
+  $current_price = $row['starting_price'];
+  // $num_bids = 1000;
   
 
 
   // TODO: If the user has a session, use it to make a query to the database
   //       to determine if the user is already watching this item.
   //       For now, this is hardcoded.
-  $has_session = true;
-  $watching = false;
+  $has_session = False;
+  $watching = False;
+
+  if(isset($_SESSION['user_id'])){
+    $has_session = True;
+    // $query = "SELECT "
+  }
 ?>
 
 
@@ -92,7 +97,7 @@
     <p>
     
     <!-- place holder data for now -->
-    <?php $sold = TRUE;
+    <?php $sold = FALSE;
     $sold_price = 400;
     ?>
 
@@ -115,8 +120,9 @@
         <div class="input-group-prepend">
           <span class="input-group-text">£</span>
         </div>
-	    <input type="number" class="form-control" id="bid">
+	    <input type="number" class="form-control" id="bid" name="bid_price" value='0'>
       </div>
+      <input type="hidden" id="auction_id" name="auction_id" value=<?php echo $_GET['auction_id'] ?>>
       <div></div>
       <button type="submit" class="btn btn-primary form-control">Place bid</button>
     </form>
