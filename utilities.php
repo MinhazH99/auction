@@ -59,21 +59,7 @@ function default_mybids($ordering)
     $num_results = mysqli_fetch_array($count_result);
     $num_queries = $num_results['count'];
     
-    while ($keyword_row = mysqli_fetch_array($keyword_result))
-    {
-
-    $item_id= $keyword_row['auction_id'];
-    $title = $keyword_row['item_name'];
-    $description= $keyword_row['item_desc'];
-    $current_price= $keyword_row['bid_price'];
-    $current_time = $keyword_row['bid_time'];
-    $end_date= new DateTime($keyword_row['expirationDate']);
-    $num_bids = 1;
-  
-// This uses a function defined in utilities.php
-    print_bid_li($item_id, $title, $description, $current_price, $num_bids, $current_time, $end_date);
-    }
-    mysqli_close($connection);
+    
 }
 // print_listing_li:
 // This function prints an HTML <li> element containing an auction listing
@@ -115,7 +101,7 @@ function print_listing_li($item_id, $title, $desc, $price, $num_bids, $end_time)
   );
 }
 
-function print_bid_li($item_id, $title, $desc, $price, $num_bids, $current_time, $end_time)
+function print_bid_li($item_id, $title, $desc, $price, $num_bids, $current_time, $end_time, $current_price)
 {
   // Truncate long descriptions
   if (strlen($desc) > 250) {
@@ -149,7 +135,7 @@ function print_bid_li($item_id, $title, $desc, $price, $num_bids, $current_time,
   echo('
     <li class="list-group-item d-flex justify-content-between">
     <div class="p-2 mr-5"><h5><a href="listing.php?auction_id=' . $item_id . '">' . $title . '</a></h5>' . $desc_shortened . '</div>
-    <div class="text-center text-nowrap"><span style="font-size: 1.5em">Your Bid: £' . number_format($price, 2) . '</span><br/>Bid submitted at: '.$current_time.'<br/>' . $num_bids . $bid . ' on this item in total<br/>' . $time_remaining . '<br/></div>
+    <div class="text-center text-nowrap"><span style="font-size: 1.5em">Your Bid: £' . number_format($price, 2) . '</span><br/>Bid submitted at: '.$current_time.'<br/><br/><h6>Current Price: £'.$current_price.'</h6>' . $num_bids . $bid . ' on this item in total<br/>' . $time_remaining . '<br/></div>
   </li>'
   );
 }

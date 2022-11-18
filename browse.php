@@ -95,29 +95,6 @@
     $num_queries = $num_results['count'];
     
 
-    
-    while ($keyword_row = mysqli_fetch_array($keyword_result))
-    {
-
-    $item_id= $keyword_row['auction_id'];
-    $title = $keyword_row['item_name'];
-    $description= $keyword_row['item_desc'];
-    $current_price= $keyword_row['starting_price']; #CHANGE THIS TO CURRENT
-    $end_date= new DateTime($keyword_row['expirationDate']);
-    
-    $num_bids = $keyword_row['numbids'];
-    
-
-    if ($now > $end_date) {
-      $num_queries = $num_queries - 1;
-      continue;
-      
-    }
-  
-// This uses a function defined in utilities.php
-    print_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_date);
-    }
-    mysqli_close($connection);
 
   }
   else {
@@ -176,31 +153,6 @@
     $num_queries = $num_results['count'];
     
     
-    while ($keyword_row = mysqli_fetch_array($keyword_result))
-    {
-
-    $item_id= $keyword_row['auction_id'];
-    $title = $keyword_row['item_name'];
-    $description= $keyword_row['item_desc'];
-    $current_price= $keyword_row['starting_price']; #CHANGE THIS TO CURRENT
-    $end_date= new DateTime($keyword_row['expirationDate']);
-    $num_bids = $keyword_row['numbids'];
-
-    if ($now > $end_date) {
-      $num_queries = $num_queries - 1;
-      continue;
-      
-    }
-  
-// This uses a function defined in utilities.php
-    print_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_date);
-    }
-    mysqli_close($connection);
-  // Demonstration of what listings will look like using dummy data. specifies information about listing
-  
-  // This uses a function defined in utilities.php
-  #print_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_date);
-
   }
   else {
     $category = $_GET['cat'];
@@ -240,32 +192,6 @@
     $num_queries = $num_results['count'];
     
     
-    while ($keyword_row = mysqli_fetch_array($keyword_result))
-    {
-
-    $item_id= $keyword_row['auction_id'];
-    $title = $keyword_row['item_name'];
-    $description= $keyword_row['item_desc'];
-    $current_price= $keyword_row['starting_price'];
-    $end_date= new DateTime($keyword_row['expirationDate']);
-    $num_bids = $keyword_row['numbids'];
-
-    if ($now > $end_date) {
-      $num_queries = $num_queries - 1;
-      continue;
-      
-    }
-    
-  
-// This uses a function defined in utilities.php
-    print_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_date);
-    }
-    mysqli_close($connection);
-  // Demonstration of what listings will look like using dummy data. specifies information about listing
-  
-  // This uses a function defined in utilities.php
-  #print_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_date);
-     
   }
   
   #isset checks whether the page has been set after it has been submitted using 'get'
@@ -286,25 +212,7 @@
   // TODO: Calculate me for real
   
   
-  if (!isset($num_queries)) {
-    $num_queries = 1;
-    
-  }
   
-  if ($num_queries==0){
-    $num_queries = 1;
-    echo('
-      <li class="list-group-item d-flex justify-content-center">
-      <div class="p-2 mr-5"><h5><center>There are no matches for your search: '.$keyword.'</center></h5>
-      <p><center>Please try another keyword</center></p></div>
-      
-    </li>'
-    );
-  }
-
-
-  $results_per_page = 10;
-  $max_page = ceil($num_queries / $results_per_page);
   
 
 ?>
@@ -312,7 +220,27 @@
 <div class="container mt-5"> <!-- mt-5 margin at top of 5 -->
 
 <!-- TODO: If result set is empty, print an informative message. Otherwise...-->
+<?php 
+if (!isset($num_queries)) {
+  $num_queries = 1;
+  
+}
 
+if ($num_queries==0){
+  $num_queries = 1;
+  echo('
+    <li class="list-group-item d-flex justify-content-center">
+    <div class="p-2 mr-5"><h5><center>There are no matches for your search: '.$keyword.'</center></h5>
+    <p><center>Please try another keyword</center></p></div>
+    
+  </li>'
+  );
+}
+
+
+$results_per_page = 10;
+$max_page = ceil($num_queries / $results_per_page);
+?>
 
 <ul class="list-group">
 
@@ -321,6 +249,28 @@
 
 <?php
   
+  while ($keyword_row = mysqli_fetch_array($keyword_result))
+    {
+
+    $item_id= $keyword_row['auction_id'];
+    $title = $keyword_row['item_name'];
+    $description= $keyword_row['item_desc'];
+    $current_price= $keyword_row['starting_price']; #CHANGE THIS TO CURRENT
+    $end_date= new DateTime($keyword_row['expirationDate']);
+    
+    $num_bids = $keyword_row['numbids'];
+    
+
+    if ($now > $end_date) {
+      $num_queries = $num_queries - 1;
+      continue;
+      
+    }
+  
+// This uses a function defined in utilities.php
+    print_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_date);
+    }
+    mysqli_close($connection);
   
 ?>
 
