@@ -84,27 +84,29 @@
     or die('Error connecting to MySQL server: ' . mysqli_error());
     $user_id = $_SESSION['user_id'];
   
-    $keyword_query = "SELECT auctions.auction_id, item_name, item_desc, item_condition, category_name, expirationDate, bid_price, bid_time, starting_price, COUNT(bids.bid_id) AS 'numbids'
-    FROM auctions
-    LEFT JOIN categories ON categories.category_id = auctions.category_id
-    LEFT JOIN bids ON bids.auction_id = auctions.auction_id
-    WHERE bids.user_id != auctions.user_id
-    AND bids.user_id = $user_id
+    $keyword_query = "SELECT bids.user_id, auctions.auction_id, item_name, item_desc, item_condition, category_name, expirationDate, bid_price, bid_time, starting_price
+    FROM auctions, categories, bids
+    WHERE categories.category_id = auctions.category_id
+    AND bids.auction_id = auctions.auction_id
+    
     GROUP BY bids.bid_id
     ORDER BY 
-    CASE WHEN '{$ordering}' = 'pricelow' THEN bids.bid_price END ASC,
-    CASE WHEN '{$ordering}' = 'pricehigh' THEN bids.bid_price END DESC,
-    CASE WHEN '{$ordering}' = 'date' THEN auctions.expirationDate END ASC,
-    CASE WHEN '{$ordering}' = 'bidold' THEN bids.bid_time END ASC,
-    CASE WHEN '{$ordering}' = 'bidnew' THEN bids.bid_time END DESC";
+    CASE WHEN '{$ordering}' = 'date' THEN auctions.expirationDate END ASC
+    ";
 
     $count_query = "SELECT COUNT(bids.bid_id) AS 'count'
     FROM  categories, auctions, bids
     WHERE categories.category_id = auctions.category_id
     AND bids.auction_id = auctions.auction_id
     AND bids.user_id != auctions.user_id
-    AND bids.user_id = $user_id";
+    GROUP BY bids.bid_id";
 
+    $count_bids_query = "SELECT auctions.auction_id, bids.user_id, COUNT(bids.bid_id) AS 'truenumbids'
+    FROM auctions, categories, bids
+    WHERE categories.category_id = auctions.category_id
+    AND bids.auction_id = auctions.auction_id
+    
+    GROUP BY auctions.auction_id";
 
 
     $count_result = mysqli_query($connection, $count_query) 
@@ -113,6 +115,11 @@
     $keyword_result = mysqli_query($connection, $keyword_query) 
       or die('Error making select users query: '. mysqli_error($connection));
     
+    $bids_result = mysqli_query($connection, $count_bids_query)
+      or die('Error making select users query: '. mysqli_error($connection));
+
+      
+
 
     $num_results = mysqli_fetch_array($count_result);
     $num_queries = $num_results['count'];
@@ -134,12 +141,11 @@
     or die('Error connecting to MySQL server: ' . mysqli_error());
     $user_id = $_SESSION['user_id'];
   
-    $keyword_query = "SELECT auctions.auction_id, item_name, item_desc, item_condition, category_name, expirationDate, bid_price, bid_time, starting_price, COUNT(bids.bid_id) AS 'numbids'
-    FROM auctions
-    LEFT JOIN categories ON categories.category_id = auctions.category_id
-    LEFT JOIN bids ON bids.auction_id = auctions.auction_id
-    WHERE bids.user_id != auctions.user_id
-    AND bids.user_id = $user_id
+    $keyword_query = "SELECT bids.user_id, auctions.auction_id, item_name, item_desc, item_condition, category_name, expirationDate, bid_price, bid_time, starting_price
+    FROM auctions, categories, bids
+    WHERE categories.category_id = auctions.category_id
+    AND bids.auction_id = auctions.auction_id
+    
     GROUP BY bids.bid_id
     ORDER BY 
     CASE WHEN '{$ordering}' = 'pricelow' THEN bids.bid_price END ASC,
@@ -153,8 +159,14 @@
     WHERE categories.category_id = auctions.category_id
     AND bids.auction_id = auctions.auction_id
     AND bids.user_id != auctions.user_id
-    AND bids.user_id = $user_id";
+    ";
 
+    $count_bids_query = "SELECT auctions.auction_id, bids.user_id, COUNT(bids.bid_id) AS 'truenumbids'
+    FROM auctions, categories, bids
+    WHERE categories.category_id = auctions.category_id
+    AND bids.auction_id = auctions.auction_id
+    
+    GROUP BY auctions.auction_id";
 
 
     $count_result = mysqli_query($connection, $count_query) 
@@ -162,14 +174,17 @@
 
     $keyword_result = mysqli_query($connection, $keyword_query) 
       or die('Error making select users query: '. mysqli_error($connection));
-    
+
+    $bids_result = mysqli_query($connection, $count_bids_query)
+      or die('Error making select users query: '. mysqli_error($connection));
+
 
     $num_results = mysqli_fetch_array($count_result);
     $num_queries = $num_results['count'];
     
 
 
-    #default_mybids($ordering);
+  
   
   
     // Demonstration of what listings will look like using dummy data. specifies information about listing
@@ -184,13 +199,12 @@
     or die('Error connecting to MySQL server: ' . mysqli_error());
     $user_id = $_SESSION['user_id'];
   
-    $keyword_query = "SELECT auctions.auction_id, item_name, item_desc, item_condition, category_name, expirationDate, bid_price, bid_time, starting_price, COUNT(bids.bid_id) AS 'numbids'
-    FROM auctions
-    LEFT JOIN categories ON categories.category_id = auctions.category_id
-    LEFT JOIN bids ON bids.auction_id = auctions.auction_id
-    WHERE categories.category_name = '{$category}'
-    AND bids.user_id != auctions.user_id
-    AND bids.user_id = $user_id
+    $keyword_query = "SELECT bids.user_id, auctions.auction_id, item_name, item_desc, item_condition, category_name, expirationDate, bid_price, bid_time, starting_price
+    FROM auctions, categories, bids
+    WHERE categories.category_id = auctions.category_id
+    AND bids.auction_id = auctions.auction_id
+    AND categories.category_name = '{$category}'
+    
     GROUP BY bids.bid_id
     ORDER BY 
     CASE WHEN '{$ordering}' = 'pricelow' THEN bids.bid_price END ASC,
@@ -199,19 +213,34 @@
     CASE WHEN '{$ordering}' = 'bidold' THEN bids.bid_time END ASC,
     CASE WHEN '{$ordering}' = 'bidnew' THEN bids.bid_time END DESC";
   
-    $count_query = "SELECT COUNT(auctions.auction_id) AS 'count'
+    $count_query = "SELECT COUNT(bids.bid_id) AS 'count'
     FROM categories, auctions, bids
     WHERE categories.category_id = auctions.category_id
     AND categories.category_name = '{$category}'
     AND bids.auction_id = auctions.auction_id
     AND bids.user_id != auctions.user_id
-    AND bids.user_id = $user_id";
+    ";
   
-    $keyword_result = mysqli_query($connection, $keyword_query) 
-      or die('Error making select users query: '. mysqli_error($connection));
-  
+    $count_bids_query = "SELECT auctions.auction_id, bids.user_id, COUNT(bids.bid_id) AS 'truenumbids'
+    FROM auctions, categories, bids
+    WHERE categories.category_id = auctions.category_id
+    AND bids.auction_id = auctions.auction_id
+    AND categories.category_name = '{$category}'
+    
+    GROUP BY auctions.auction_id";
+
+
     $count_result = mysqli_query($connection, $count_query) 
       or die('Error making select users query: '. mysqli_error($connection));
+
+    $keyword_result = mysqli_query($connection, $keyword_query) 
+      or die('Error making select users query: '. mysqli_error($connection));
+    
+    $bids_result = mysqli_query($connection, $count_bids_query)
+      or die('Error making select users query: '. mysqli_error($connection));
+
+
+    
     
     
  
@@ -270,21 +299,46 @@ $max_page = ceil($num_queries / $results_per_page);
 
 <?php
 
+$auction_id = array();
+$true_bids = array();
+
+while ($row = mysqli_fetch_array($bids_result))
+  {
+    $auction_id[] = $row['auction_id'];
+  $true_bids[] = $row['truenumbids'];
+  
+}
+
+$count = count($auction_id);
+
 while ($keyword_row = mysqli_fetch_array($keyword_result))
 {
-
-$item_id= $keyword_row['auction_id'];
-$title = $keyword_row['item_name'];
-$description= $keyword_row['item_desc'];
-$bid_price= $keyword_row['bid_price'];
-$current_time = $keyword_row['bid_time'];
-$end_date= new DateTime($keyword_row['expirationDate']);
-$num_bids = $keyword_row['numbids'];
-$current_price = $keyword_row['starting_price'];
-
-// This uses a function defined in utilities.php
-print_bid_li($item_id, $title, $description, $bid_price, $num_bids, $current_time, $end_date, $current_price);
+  
+  $bid_user_id = $keyword_row['user_id'];
+  if ($bid_user_id == $user_id){
+  $item_id= $keyword_row['auction_id'];  
+  $title = $keyword_row['item_name'];
+  $description= $keyword_row['item_desc'];
+  $bid_price= $keyword_row['bid_price'];
+  $current_time = $keyword_row['bid_time'];
+  $end_date= new DateTime($keyword_row['expirationDate']);
+  $current_price = $keyword_row['starting_price'];
+  for ($num = 0; $num < $count; $num++){
+    if ($auction_id[$num] == $item_id){
+      $num_bids = $true_bids[$num];
+      print_bid_li($item_id, $title, $description, $bid_price, $num_bids, $current_time, $end_date, $current_price);
+    }
+    else {
+      continue;
+    }
+  }
+  }
+  else{
+    continue;
+  }
+  
 }
+
 mysqli_close($connection);
   
 ?>
