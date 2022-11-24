@@ -98,8 +98,8 @@
     FROM  categories, auctions, bids
     WHERE categories.category_id = auctions.category_id
     AND bids.auction_id = auctions.auction_id
-    AND bids.user_id != auctions.user_id
-    GROUP BY bids.bid_id";
+    AND bids.user_id = $user_id
+    ";
 
     $count_bids_query = "SELECT auctions.auction_id, bids.user_id, COUNT(bids.bid_id) AS 'truenumbids'
     FROM auctions, categories, bids
@@ -158,7 +158,7 @@
     FROM  categories, auctions, bids
     WHERE categories.category_id = auctions.category_id
     AND bids.auction_id = auctions.auction_id
-    AND bids.user_id != auctions.user_id
+    
     ";
 
     $count_bids_query = "SELECT auctions.auction_id, bids.user_id, COUNT(bids.bid_id) AS 'truenumbids'
@@ -218,7 +218,6 @@
     WHERE categories.category_id = auctions.category_id
     AND categories.category_name = '{$category}'
     AND bids.auction_id = auctions.auction_id
-    AND bids.user_id != auctions.user_id
     ";
   
     $count_bids_query = "SELECT auctions.auction_id, bids.user_id, COUNT(bids.bid_id) AS 'truenumbids'
@@ -340,7 +339,7 @@ while ($keyword_row = mysqli_fetch_array($keyword_result))
 }
 
 mysqli_close($connection);
-  
+
 ?>
 
 </ul>
