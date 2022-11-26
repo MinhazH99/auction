@@ -19,7 +19,8 @@
   function isLoggedIn() { return isset($_SESSION['user_id']);}
 
   if (!isLoggedIn())
-    echo 'Please login';
+    echo 'Please login'; /* add redirect */
+    die();
 
   // TODO: Perform a query to pull up their auctions.
   $host = "localhost";
@@ -32,10 +33,30 @@
   $user = $_SESSION['user_id']; 
 
   $user_listings = "SELECT auction_id,item_name,item_desc,expirationDate,starting_price FROM auctions WHERE user_id = '$user'";
+  
+  $count_bids_query = "SELECT auctions.auction_id, bids.user_id, COUNT(bids.bid_id) AS 'truenumbids'
+  FROM auctions
+  LEFT JOIN categories ON categories.category_id = auctions.category_id
+  LEFT JOIN bids ON bids.auction_id = auctions.auction_id
+  WHERE auctions.user_id = $user
+  GROUP BY auctions.auction_id";
 
   $user_listings_res = mysqli_query($connection,$user_listings);
 
+  $bids_result = mysqli_query($connection, $count_bids_query)
+    or die('Error making select users query: '. mysqli_error($connection));
 
+  $auction_id = array();
+  $true_bids = array();
+    
+  while ($row = mysqli_fetch_array($bids_result))
+    {
+      $auction_id[] = $row['auction_id'];
+      $true_bids[] = $row['truenumbids'];
+      
+    }
+  
+  $count = count($auction_id);
   
   // TODO: Loop through results and print them out as list items.
 
@@ -47,9 +68,19 @@
     $description = $user_listing_row['item_desc'];
     $current_price= $user_listing_row['starting_price'];
     $end_date = new DateTime($user_listing_row['expirationDate']);
-    $num_bids = 1;
+    for ($num = 0; $num < $count; $num++){
+      if ($auction_id[$num] == $item_id){
+        $num_bids = $true_bids[$num];
+        print_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_date);
+      }
+      else {
+        continue;
+      }
+    }
+    
+    
 
-    print_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_date);
+    
   }
   mysqli_close($connection);
   

@@ -57,7 +57,9 @@
   </div>
   
   </li>'
+  
   );
+  
 
   // This page is for showing a user the auctions they've bid on.
   // It will be pretty similar to browse.php, except there is no search bar.
@@ -78,8 +80,52 @@
   if (!isset($_GET['order_by2']) && !isset($_GET['cat2'])) {
     $ordering ="date";
     $category = "all";
+    $connection = mysqli_connect('localhost','root','','auction')
+    or die('Error connecting to MySQL server: ' . mysqli_error());
+    $user_id = $_SESSION['user_id'];
+  
+    $keyword_query = "SELECT bids.user_id, auctions.auction_id, item_name, item_desc, item_condition, category_name, expirationDate, bid_price, bid_time, starting_price
+    FROM auctions, categories, bids
+    WHERE categories.category_id = auctions.category_id
+    AND bids.auction_id = auctions.auction_id
     
-    default_mybids($ordering);
+    GROUP BY bids.bid_id
+    ORDER BY 
+    CASE WHEN '{$ordering}' = 'date' THEN auctions.expirationDate END ASC
+    ";
+
+    $count_query = "SELECT COUNT(bids.bid_id) AS 'count'
+    FROM  categories, auctions, bids
+    WHERE categories.category_id = auctions.category_id
+    AND bids.auction_id = auctions.auction_id
+    AND bids.user_id = $user_id
+    ";
+
+    $count_bids_query = "SELECT auctions.auction_id, bids.user_id, COUNT(bids.bid_id) AS 'truenumbids'
+    FROM auctions, categories, bids
+    WHERE categories.category_id = auctions.category_id
+    AND bids.auction_id = auctions.auction_id
+    
+    GROUP BY auctions.auction_id";
+
+
+    $count_result = mysqli_query($connection, $count_query) 
+      or die('Error making select users query: '. mysqli_error($connection));
+
+    $keyword_result = mysqli_query($connection, $keyword_query) 
+      or die('Error making select users query: '. mysqli_error($connection));
+    
+    $bids_result = mysqli_query($connection, $count_bids_query)
+      or die('Error making select users query: '. mysqli_error($connection));
+
+      
+
+
+    $num_results = mysqli_fetch_array($count_result);
+    $num_queries = $num_results['count'];
+    
+    
+    #default_mybids($ordering);
   }
   else {
     $ordering = $_GET['order_by2'];
@@ -91,8 +137,57 @@
 #isset checks whether the category variable has been set after it has been submitted using 'get'
   else if ($_GET['cat2']=="all") {
    
-    default_mybids($ordering);
-  // Demonstration of what listings will look like using dummy data. specifies information about listing
+    $connection = mysqli_connect('localhost','root','','auction')
+    or die('Error connecting to MySQL server: ' . mysqli_error());
+    $user_id = $_SESSION['user_id'];
+  
+    $keyword_query = "SELECT bids.user_id, auctions.auction_id, item_name, item_desc, item_condition, category_name, expirationDate, bid_price, bid_time, starting_price
+    FROM auctions, categories, bids
+    WHERE categories.category_id = auctions.category_id
+    AND bids.auction_id = auctions.auction_id
+    
+    GROUP BY bids.bid_id
+    ORDER BY 
+    CASE WHEN '{$ordering}' = 'pricelow' THEN bids.bid_price END ASC,
+    CASE WHEN '{$ordering}' = 'pricehigh' THEN bids.bid_price END DESC,
+    CASE WHEN '{$ordering}' = 'date' THEN auctions.expirationDate END ASC,
+    CASE WHEN '{$ordering}' = 'bidold' THEN bids.bid_time END ASC,
+    CASE WHEN '{$ordering}' = 'bidnew' THEN bids.bid_time END DESC";
+
+    $count_query = "SELECT COUNT(bids.bid_id) AS 'count'
+    FROM  categories, auctions, bids
+    WHERE categories.category_id = auctions.category_id
+    AND bids.auction_id = auctions.auction_id
+    
+    ";
+
+    $count_bids_query = "SELECT auctions.auction_id, bids.user_id, COUNT(bids.bid_id) AS 'truenumbids'
+    FROM auctions, categories, bids
+    WHERE categories.category_id = auctions.category_id
+    AND bids.auction_id = auctions.auction_id
+    
+    GROUP BY auctions.auction_id";
+
+
+    $count_result = mysqli_query($connection, $count_query) 
+      or die('Error making select users query: '. mysqli_error($connection));
+
+    $keyword_result = mysqli_query($connection, $keyword_query) 
+      or die('Error making select users query: '. mysqli_error($connection));
+
+    $bids_result = mysqli_query($connection, $count_bids_query)
+      or die('Error making select users query: '. mysqli_error($connection));
+
+
+    $num_results = mysqli_fetch_array($count_result);
+    $num_queries = $num_results['count'];
+    
+
+
+  
+  
+  
+    // Demonstration of what listings will look like using dummy data. specifies information about listing
   
   // This uses a function defined in utilities.php
   #print_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_date);
@@ -104,13 +199,13 @@
     or die('Error connecting to MySQL server: ' . mysqli_error());
     $user_id = $_SESSION['user_id'];
   
-    $keyword_query = "SELECT auctions.auction_id, item_name, item_desc, item_condition, category_name, expirationDate, reserve_price, bid_price, bid_time
-    FROM categories, auctions, bids
+    $keyword_query = "SELECT bids.user_id, auctions.auction_id, item_name, item_desc, item_condition, category_name, expirationDate, bid_price, bid_time, starting_price
+    FROM auctions, categories, bids
     WHERE categories.category_id = auctions.category_id
-    AND categories.category_name = '{$category}'
     AND bids.auction_id = auctions.auction_id
-    AND bids.user_id != auctions.user_id
-    AND bids.user_id = $user_id
+    AND categories.category_name = '{$category}'
+    
+    GROUP BY bids.bid_id
     ORDER BY 
     CASE WHEN '{$ordering}' = 'pricelow' THEN bids.bid_price END ASC,
     CASE WHEN '{$ordering}' = 'pricehigh' THEN bids.bid_price END DESC,
@@ -118,88 +213,133 @@
     CASE WHEN '{$ordering}' = 'bidold' THEN bids.bid_time END ASC,
     CASE WHEN '{$ordering}' = 'bidnew' THEN bids.bid_time END DESC";
   
-    $count_query = "SELECT COUNT(auctions.auction_id) AS 'count'
+    $count_query = "SELECT COUNT(bids.bid_id) AS 'count'
     FROM categories, auctions, bids
     WHERE categories.category_id = auctions.category_id
     AND categories.category_name = '{$category}'
     AND bids.auction_id = auctions.auction_id
-    AND bids.user_id != auctions.user_id
-    AND bids.user_id = $user_id";
+    ";
   
-    $keyword_result = mysqli_query($connection, $keyword_query) 
-      or die('Error making select users query: '. mysqli_error($connection));
-  
+    $count_bids_query = "SELECT auctions.auction_id, bids.user_id, COUNT(bids.bid_id) AS 'truenumbids'
+    FROM auctions, categories, bids
+    WHERE categories.category_id = auctions.category_id
+    AND bids.auction_id = auctions.auction_id
+    AND categories.category_name = '{$category}'
+    
+    GROUP BY auctions.auction_id";
+
+
     $count_result = mysqli_query($connection, $count_query) 
       or die('Error making select users query: '. mysqli_error($connection));
+
+    $keyword_result = mysqli_query($connection, $keyword_query) 
+      or die('Error making select users query: '. mysqli_error($connection));
+    
+    $bids_result = mysqli_query($connection, $count_bids_query)
+      or die('Error making select users query: '. mysqli_error($connection));
+
+
+    
     
     
  
     $num_results = mysqli_fetch_array($count_result);
     $num_queries = $num_results['count'];
     
-    while ($keyword_row = mysqli_fetch_array($keyword_result))
-    {
-
-    $item_id= $keyword_row['auction_id'];
-    $title = $keyword_row['item_name'];
-    $description= $keyword_row['item_desc'];
-    $current_price= $keyword_row['bid_price'];
-    $current_time = $keyword_row['bid_time'];
-    $end_date= new DateTime($keyword_row['expirationDate']);
-    $num_bids = 1;
-  
-// This uses a function defined in utilities.php
-    print_bid_li($item_id, $title, $description, $current_price, $num_bids, $current_time, $end_date);
-    }
-    mysqli_close($connection);
+    
   // Demonstration of what listings will look like using dummy data. specifies information about listing
   
   // This uses a function defined in utilities.php
-  #print_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_date);
+  
      
   }
   
   #isset checks whether the page has been set after it has been submitted using 'get'
-  if (!isset($_GET['page'])) {
-    $curr_page = 1; #php variable
-  }
-  else {
-    $curr_page = $_GET['page'];
-  }
- 
-  if (!isset($num_queries)) {
-    $num_queries = 1;
-    
-  }
   
-  if ($num_queries==0){
-    $num_queries = 1;
-    echo('
-      <li class="list-group-item d-flex justify-content-center">
-      <div class="p-2 mr-5"><h5><center>There are no bids on items in this category</center></h5>
-      </div>
-      
-    </li>'
-    );
-  }
-
-
-  $results_per_page = 10;
-  $max_page = ceil($num_queries / $results_per_page);
   
 
 ?>
 
 <div class="container mt-5"> <!-- mt-5 margin at top of 5 -->
 
+<?php 
+
+if (!isset($_GET['page'])) {
+  $curr_page = 1; #php variable
+}
+else {
+  $curr_page = $_GET['page'];
+}
+
+if (!isset($num_queries)) {
+  $num_queries = 1;
+  
+}
+
+if ($num_queries==0){
+  $num_queries = 1;
+  echo('
+    <li class="list-group-item d-flex justify-content-center">
+    <div class="p-2 mr-5"><h5><center>There are no bids on items in this category</center></h5>
+    </div>
+    
+  </li>'
+  );
+}
+
+
+$results_per_page = 10;
+$max_page = ceil($num_queries / $results_per_page);
+?>
 
 
 <ul class="list-group">
 
 
 <?php
+
+$auction_id = array();
+$true_bids = array();
+
+while ($row = mysqli_fetch_array($bids_result))
+  {
+    $auction_id[] = $row['auction_id'];
+  $true_bids[] = $row['truenumbids'];
   
+}
+
+$count = count($auction_id);
+
+while ($keyword_row = mysqli_fetch_array($keyword_result))
+{
   
+  $bid_user_id = $keyword_row['user_id'];
+  if ($bid_user_id == $user_id){
+  $item_id= $keyword_row['auction_id'];  
+  $title = $keyword_row['item_name'];
+  $description= $keyword_row['item_desc'];
+  $bid_price= $keyword_row['bid_price'];
+  $current_time = $keyword_row['bid_time'];
+  $end_date= new DateTime($keyword_row['expirationDate']);
+  $current_price = $keyword_row['starting_price'];
+  for ($num = 0; $num < $count; $num++){
+    if ($auction_id[$num] == $item_id){
+      $num_bids = $true_bids[$num];
+      print_bid_li($item_id, $title, $description, $bid_price, $num_bids, $current_time, $end_date, $current_price);
+    }
+    else {
+      continue;
+    }
+  }
+  }
+  else{
+    continue;
+  }
+  
+}
+
+mysqli_close($connection);
+
 ?>
 
 </ul>

@@ -69,19 +69,20 @@
     $connection = mysqli_connect('localhost','root','','auction')
     or die('Error connecting to MySQL server: ' . mysqli_error());
   
-    $keyword_query = "SELECT auction_id, item_name, item_desc, item_condition, category_name, expirationDate, reserve_price
-    FROM categories, auctions
-    WHERE categories.category_id = auctions.category_id
-    AND (INSTR(auctions.item_desc, TRIM(' ' FROM '{$keyword}')) 
+    $keyword_query = "SELECT auctions.auction_id, item_name, item_desc, item_condition, category_name, expirationDate, starting_price, COUNT(bids.bid_id) AS 'numbids'
+    FROM auctions
+    LEFT JOIN categories ON categories.category_id = auctions.category_id
+    LEFT JOIN bids ON bids.auction_id = auctions.auction_id
+    WHERE (INSTR(auctions.item_desc, TRIM(' ' FROM '{$keyword}')) 
     OR INSTR(auctions.item_name, TRIM(' ' FROM '{$keyword}')) )> 0
+    GROUP BY auctions.auction_id
     ORDER BY categories.category_id ASC";
 
     $count_query = "SELECT COUNT(auctions.auction_id) AS 'count'
     FROM categories, auctions
-    WHERE categories.category_id = auctions.category_id
+    WHERE categories.category_id = auctions.category_id  
     AND (INSTR(auctions.item_desc, TRIM(' ' FROM '{$keyword}')) 
     OR INSTR(auctions.item_name, TRIM(' ' FROM '{$keyword}')) )> 0";
-
 
 
     $count_result = mysqli_query($connection, $count_query) 
@@ -89,30 +90,11 @@
 
     $keyword_result = mysqli_query($connection, $keyword_query) 
       or die('Error making select users query: '. mysqli_error($connection));
-    
 
     $num_results = mysqli_fetch_array($count_result);
     $num_queries = $num_results['count'];
     
-    while ($keyword_row = mysqli_fetch_array($keyword_result))
-    {
 
-    $item_id= $keyword_row['auction_id'];
-    $title = $keyword_row['item_name'];
-    $description= $keyword_row['item_desc'];
-    $current_price= $keyword_row['reserve_price']; #CHANGE THIS TO CURRENT
-    $end_date= new DateTime($keyword_row['expirationDate']);
-    $num_bids = 1; #CHANGE THIS TO CURRENT NUMBER OF BIDA
-
-    if ($now > $end_date) {
-      continue;
-      
-    }
-  
-// This uses a function defined in utilities.php
-    print_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_date);
-    }
-    mysqli_close($connection);
 
   }
   else {
@@ -140,14 +122,16 @@
     $connection = mysqli_connect('localhost','root','','auction')
     or die('Error connecting to MySQL server: ' . mysqli_error());
   
-    $keyword_query = "SELECT auction_id, item_name, item_desc, item_condition, category_name, expirationDate, reserve_price
-    FROM categories, auctions
-    WHERE categories.category_id = auctions.category_id
-    AND (INSTR(auctions.item_desc, TRIM(' ' FROM '{$keyword}')) 
+    $keyword_query = "SELECT auctions.auction_id, item_name, item_desc, item_condition, category_name, expirationDate, starting_price, COUNT(bids.bid_id) AS 'numbids'
+    FROM auctions
+    LEFT JOIN categories ON categories.category_id = auctions.category_id
+    LEFT JOIN bids ON bids.auction_id = auctions.auction_id
+    WHERE (INSTR(auctions.item_desc, TRIM(' ' FROM '{$keyword}')) 
     OR INSTR(auctions.item_name, TRIM(' ' FROM '{$keyword}')) )> 0
+    GROUP BY auctions.auction_id
     ORDER BY 
-    CASE WHEN '{$ordering}' = 'pricelow' THEN auctions.reserve_price END ASC,
-    CASE WHEN '{$ordering}' = 'pricehigh' THEN auctions.reserve_price END DESC,
+    CASE WHEN '{$ordering}' = 'pricelow' THEN auctions.starting_price END ASC,
+    CASE WHEN '{$ordering}' = 'pricehigh' THEN auctions.starting_price END DESC,
     CASE WHEN '{$ordering}' = 'date' THEN auctions.expirationDate END ASC";
 
     $count_query = "SELECT COUNT(auctions.auction_id) AS 'count'
@@ -168,54 +152,33 @@
     $num_results = mysqli_fetch_array($count_result);
     $num_queries = $num_results['count'];
     
-    while ($keyword_row = mysqli_fetch_array($keyword_result))
-    {
-
-    $item_id= $keyword_row['auction_id'];
-    $title = $keyword_row['item_name'];
-    $description= $keyword_row['item_desc'];
-    $current_price= $keyword_row['reserve_price']; #CHANGE THIS TO CURRENT
-    $end_date= new DateTime($keyword_row['expirationDate']);
-    $num_bids = 1; #CHANGE THIS TO CURRENT NUMBER OF BIDA
-
-    if ($now > $end_date) {
-      continue;
-      
-    }
-  
-// This uses a function defined in utilities.php
-    print_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_date);
-    }
-    mysqli_close($connection);
-  // Demonstration of what listings will look like using dummy data. specifies information about listing
-  
-  // This uses a function defined in utilities.php
-  #print_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_date);
-
+    
   }
   else {
     $category = $_GET['cat'];
     $connection = mysqli_connect('localhost','root','','auction')
     or die('Error connecting to MySQL server: ' . mysqli_error());
   
-    $keyword_query = "SELECT auctions.auction_id, item_name, item_desc, item_condition, category_name, expirationDate, reserve_price
-    FROM categories, auctions
-    WHERE categories.category_id = auctions.category_id
-    AND categories.category_name = '{$category}'
-    
+    $keyword_query = "SELECT auctions.auction_id, item_name, item_desc, item_condition, category_name, expirationDate, starting_price, COUNT(bids.bid_id) AS 'numbids'
+    FROM auctions
+    LEFT JOIN categories ON categories.category_id = auctions.category_id
+    LEFT JOIN bids ON bids.auction_id = auctions.auction_id
+    WHERE categories.category_name = '{$category}'
     AND (INSTR(auctions.item_desc, TRIM(' ' FROM '{$keyword}')) 
     OR INSTR(auctions.item_name, TRIM(' ' FROM '{$keyword}')) )> 0
+    GROUP BY auctions.auction_id
     ORDER BY 
-    CASE WHEN '{$ordering}' = 'pricelow' THEN auctions.reserve_price END ASC,
-    CASE WHEN '{$ordering}' = 'pricehigh' THEN auctions.reserve_price END DESC,
+    CASE WHEN '{$ordering}' = 'pricelow' THEN auctions.starting_price END ASC,
+    CASE WHEN '{$ordering}' = 'pricehigh' THEN auctions.starting_price END DESC,
     CASE WHEN '{$ordering}' = 'date' THEN auctions.expirationDate END ASC";
   
     $count_query = "SELECT COUNT(auctions.auction_id) AS 'count'
-    FROM categories, auctions
-    WHERE categories.category_id = auctions.category_id
-    AND categories.category_name = '{$category}'
+    FROM auctions, categories
+    WHERE categories.category_name = '{$category}'
+    AND categories.category_id = auctions.category_id
     AND (INSTR(auctions.item_desc, TRIM(' ' FROM '{$keyword}')) 
-    OR INSTR(auctions.item_name, TRIM(' ' FROM '{$keyword}')) )> 0";
+    OR INSTR(auctions.item_name, TRIM(' ' FROM '{$keyword}')) )> 0
+    ";
   
     $keyword_result = mysqli_query($connection, $keyword_query) 
       or die('Error making select users query: '. mysqli_error($connection));
@@ -228,30 +191,7 @@
     $num_results = mysqli_fetch_array($count_result);
     $num_queries = $num_results['count'];
     
-    while ($keyword_row = mysqli_fetch_array($keyword_result))
-    {
-
-    $item_id= $keyword_row['auction_id'];
-    $title = $keyword_row['item_name'];
-    $description= $keyword_row['item_desc'];
-    $current_price= $keyword_row['reserve_price'];
-    $end_date= new DateTime($keyword_row['expirationDate']);
-    $num_bids = 1;
-
-    if ($now > $end_date) {
-      continue;
-      
-    }
-  
-// This uses a function defined in utilities.php
-    print_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_date);
-    }
-    mysqli_close($connection);
-  // Demonstration of what listings will look like using dummy data. specifies information about listing
-  
-  // This uses a function defined in utilities.php
-  #print_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_date);
-     
+    
   }
   
   #isset checks whether the page has been set after it has been submitted using 'get'
@@ -272,25 +212,7 @@
   // TODO: Calculate me for real
   
   
-  if (!isset($num_queries)) {
-    $num_queries = 1;
-    
-  }
   
-  if ($num_queries==0){
-    $num_queries = 1;
-    echo('
-      <li class="list-group-item d-flex justify-content-center">
-      <div class="p-2 mr-5"><h5><center>There are no matches for your search: '.$keyword.'</center></h5>
-      <p><center>Please try another keyword</center></p></div>
-      
-    </li>'
-    );
-  }
-
-
-  $results_per_page = 10;
-  $max_page = ceil($num_queries / $results_per_page);
   
 
 ?>
@@ -298,7 +220,27 @@
 <div class="container mt-5"> <!-- mt-5 margin at top of 5 -->
 
 <!-- TODO: If result set is empty, print an informative message. Otherwise...-->
+<?php 
+if (!isset($num_queries)) {
+  $num_queries = 1;
+  
+}
 
+if ($num_queries==0){
+  $num_queries = 1;
+  echo('
+    <li class="list-group-item d-flex justify-content-center">
+    <div class="p-2 mr-5"><h5><center>There are no matches for your search: '.$keyword.'</center></h5>
+    <p><center>Please try another keyword</center></p></div>
+    
+  </li>'
+  );
+}
+
+
+$results_per_page = 10;
+$max_page = ceil($num_queries / $results_per_page);
+?>
 
 <ul class="list-group">
 
@@ -307,6 +249,28 @@
 
 <?php
   
+  while ($keyword_row = mysqli_fetch_array($keyword_result))
+    {
+
+    $item_id= $keyword_row['auction_id'];
+    $title = $keyword_row['item_name'];
+    $description= $keyword_row['item_desc'];
+    $current_price= $keyword_row['starting_price']; #CHANGE THIS TO CURRENT
+    $end_date= new DateTime($keyword_row['expirationDate']);
+    
+    $num_bids = $keyword_row['numbids'];
+    
+
+    if ($now > $end_date) {
+      $num_queries = $num_queries - 1;
+      continue;
+      
+    }
+  
+// This uses a function defined in utilities.php
+    print_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_date);
+    }
+    mysqli_close($connection);
   
 ?>
 
