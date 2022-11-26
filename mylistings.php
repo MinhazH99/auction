@@ -14,12 +14,12 @@
   
   
   // TODO: Check user's credentials (cookie/session).
+
   
   function isLoggedIn() { return isset($_SESSION['user_id']);}
 
   if (!isLoggedIn())
-    echo 'Please login'; /* add redirect */
-    die();
+    echo 'Please login';
 
   // TODO: Perform a query to pull up their auctions.
   $host = "localhost";
@@ -29,7 +29,7 @@
   
   $connection = mysqli_connect($host, $username, $password, $dbname);
 
-  $user = $_SESSION['user_id'];
+  $user = $_SESSION['user_id']; 
 
   $user_listings = "SELECT auction_id,item_name,item_desc,expirationDate,starting_price FROM auctions WHERE user_id = '$user'";
 
