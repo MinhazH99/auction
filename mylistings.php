@@ -20,7 +20,6 @@
 
   if (!isLoggedIn())
     echo 'Please login'; /* add redirect */
-    die();
 
   // TODO: Perform a query to pull up their auctions.
   $host = "localhost";
@@ -42,7 +41,6 @@
   GROUP BY auctions.auction_id";
 
   $user_listings_res = mysqli_query($connection,$user_listings);
-
   $bids_result = mysqli_query($connection, $count_bids_query)
     or die('Error making select users query: '. mysqli_error($connection));
 
@@ -63,6 +61,7 @@
   while ($user_listing_row = mysqli_fetch_array($user_listings_res))
 
   {
+    var_dump($user_listing_row);
     $item_id = $user_listing_row['auction_id'];
     $title = $user_listing_row['item_name'];
     $description = $user_listing_row['item_desc'];
