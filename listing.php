@@ -5,7 +5,7 @@
 <?php
   // Get info from the URL:   
   $item_id = $_GET['auction_id'];
-
+  echo $item_id;
   if (!$item_id){
     // header("Location: browse.php")
     echo 'This item_id does not exist';
@@ -55,7 +55,20 @@
 
   if(isset($_SESSION['user_id'])){
     $has_session = True;
-    // $query = "SELECT "
+
+    $query = "SELECT CASE WHEN EXISTS ( SELECT * FROM `watch` WHERE `user_id` = {$_SESSION['user_id']} AND `auction_id` = {$item_id} ) THEN 'TRUE' ELSE 'FALSE' END AS 'watch_status'";
+    $watch_status = $connection->query($query);
+    $row = $watch_status->fetch_assoc();
+
+    echo $row['watch_status'];
+    var_dump($row);
+
+    if ($row['watch_status']=='TRUE'){
+      echo 'this should return true';
+      $watching = True;
+    } else {
+      echo 'this should not be printed when true';
+    }
   }
 ?>
 
@@ -146,10 +159,12 @@ function addToWatchlist(button) {
 
   // This performs an asynchronous call to a PHP function using POST method.
   // Sends item ID as an argument to that function.
+  console.log("this is what item_id is currently: " + <?php echo($item_id);?>)
+
   $.ajax('watchlist_funcs.php', {
     type: "POST",
     data: {functionname: 'add_to_watchlist', arguments: [<?php echo($item_id);?>]},
-
+    
     success: 
       function (obj, textstatus) {
         // Callback function for when call is successful and returns obj
@@ -163,6 +178,9 @@ function addToWatchlist(button) {
         else {
           var mydiv = document.getElementById("watch_nowatch");
           mydiv.appendChild(document.createElement("br"));
+          console.log(objT);
+          console.log(typeof(objT));
+
           mydiv.appendChild(document.createTextNode("Add to watch failed. Try again later."));
         }
       },
@@ -196,6 +214,8 @@ function removeFromWatchlist(button) {
           var mydiv = document.getElementById("watch_watching");
           mydiv.appendChild(document.createElement("br"));
           mydiv.appendChild(document.createTextNode("Watch removal failed. Try again later."));
+          console.log(objT);
+          console.log(typeof(objT));
         }
       },
 
