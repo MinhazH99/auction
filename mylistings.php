@@ -30,9 +30,7 @@
   $connection = mysqli_connect($host, $username, $password, $dbname);
 
   $user = $_SESSION['user_id'];
-  $user = $_SESSION['user_id']; 
-
-  $user_listings = "SELECT auction_id,item_name,item_desc,expirationDate,starting_price FROM auctions WHERE user_id = '$user'";
+  
   
   $count_bids_query = "SELECT auctions.auction_id, item_name,item_desc,expirationDate,starting_price, COUNT(bids.bid_id) AS 'truenumbids'
   FROM auctions
@@ -112,34 +110,8 @@ else {
       print_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_date);
 
         }
-  while ($row = mysqli_fetch_array($bids_result))
-    {
-      $auction_id[] = $row['auction_id'];
-      $true_bids[] = $row['truenumbids'];
-      
-    }
-  
-  $count = count($auction_id);
-  
-  // TODO: Loop through results and print them out as list items.
-
-  while ($user_listing_row = mysqli_fetch_array($user_listings_res))
-
-  {
-    var_dump($user_listing_row);
-    $item_id = $user_listing_row['auction_id'];
-    $title = $user_listing_row['item_name'];
-    $description = $user_listing_row['item_desc'];
-    $current_price= $user_listing_row['starting_price'];
-    $end_date = new DateTime($user_listing_row['expirationDate']);
-    for ($num = 0; $num < $count; $num++){
-      if ($auction_id[$num] == $item_id){
-        $num_bids = $true_bids[$num];
-        print_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_date);
       }
-      else {
-        continue;
-      }
+  
   else{
     
     for ($count = ($curr_page-1)*$results_per_page; $count<$num_queries;$count++){
@@ -160,6 +132,7 @@ else {
   }
   
 }
+  
 
 // This uses a function defined in utilities.php
 
