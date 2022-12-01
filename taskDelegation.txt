@@ -50,18 +50,32 @@ common php functions:
 	mybids.php
 	place_bid.php
     listing.php
-
+	watchlist_funcs.php
 
     INCOMPLETED:
    
 
    
 
-    CURRENTLY WORKING ON:
-	recommendations.php
-	watchlist_funcs.php
+    CURRENTLY WORKING ON/ NEED TO IMPLEMENT:
+	page navigation in browse -> Hamzah
+	add my watchlist button -> Minhaz
+	add my orders button -> Minhaz
+	
+	recommendations.php -> Mevrick
+	
+	show expired auctions in my listing php
+
+	email.php -> Mevrick
+
+	remove user_status (auctions) -> all
+	remove watch id (watch) -> all
+
 	make website look peng    
-    
+    -> add images
+
+	add javascript for create auction
+
     
 
     
