@@ -29,184 +29,60 @@
   
   $connection = mysqli_connect($host, $username, $password, $dbname);
 
-  $user = $_SESSION['user_id'];
+  $user = $_SESSION['user_id']; 
+
+  $user_listings = "SELECT auction_id,item_name,item_desc,expirationDate,starting_price FROM auctions WHERE user_id = '$user'";
   
-  
-  $count_bids_query = "SELECT auctions.auction_id, item_name,item_desc,expirationDate,starting_price, COUNT(bids.bid_id) AS 'truenumbids'
+  $count_bids_query = "SELECT auctions.auction_id, bids.user_id, COUNT(bids.bid_id) AS 'truenumbids'
   FROM auctions
   LEFT JOIN categories ON categories.category_id = auctions.category_id
   LEFT JOIN bids ON bids.auction_id = auctions.auction_id
   WHERE auctions.user_id = $user
   GROUP BY auctions.auction_id";
-  
-  
-  if (!isset($_GET['page'])) {
-    $curr_page = 1; #php variable
-  }
-  else {
-    $curr_page = $_GET['page'];
-  }
 
-
-?>
-
-<div class="container mt-5"> <!-- mt-5 margin at top of 5 -->
-
-<!-- TODO: If result set is empty, print an informative message. Otherwise...-->
-<?php 
-   
-  
+  $user_listings_res = mysqli_query($connection,$user_listings);
   $bids_result = mysqli_query($connection, $count_bids_query)
-  or die('Error making select users query: '. mysqli_error($connection));
+    or die('Error making select users query: '. mysqli_error($connection));
 
-  $num_queries = mysqli_num_rows($bids_result);
-  $results_per_page = 10;
-
-if (!isset($num_queries)) {
-  $num_queries = 0;
-  $max_page = 1;
-  
-}
-
-if ($num_queries==0){
-  $num_queries = 0;
-  $max_page = 1;
-  echo('
-    <li class="list-group-item d-flex justify-content-center">
-    <div class="p-2 mr-5"><h5><center>You have not listed any items</center></h5>
-    </div>
+  $auction_id = array();
+  $true_bids = array();
     
-  </li>'
-  );
-}
-else {
+  while ($row = mysqli_fetch_array($bids_result))
+    {
+      $auction_id[] = $row['auction_id'];
+      $true_bids[] = $row['truenumbids'];
+      
+    }
   
-  $max_page = ceil($num_queries / $results_per_page);
+  $count = count($auction_id);
+  
+  // TODO: Loop through results and print them out as list items.
 
-}
+  while ($user_listing_row = mysqli_fetch_array($user_listings_res))
 
-?>
-
-
-<ul class="list-group">
-
-
-<?php
-
-  $keyword_rows = $bids_result -> fetch_all(MYSQLI_NUM);
-  if ($num_queries > 0){
-  if ($curr_page < $max_page) {
-    for ($count = ($curr_page-1)*$results_per_page; $count<$curr_page*$results_per_page;$count++){
-      $keyword_row = $keyword_rows[$count];
-      
-      
-      $item_id= $keyword_row[0];
-      $title = $keyword_row[1];
-      $description= $keyword_row[2];
-      $end_date= new DateTime($keyword_row[3]);
-      $current_price= $keyword_row[4]; #CHANGE THIS TO CURRENT
-      $num_bids = $keyword_row[5];
-      
-      print_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_date);
-
-        }
+  {
+    var_dump($user_listing_row);
+    $item_id = $user_listing_row['auction_id'];
+    $title = $user_listing_row['item_name'];
+    $description = $user_listing_row['item_desc'];
+    $current_price= $user_listing_row['starting_price'];
+    $end_date = new DateTime($user_listing_row['expirationDate']);
+    for ($num = 0; $num < $count; $num++){
+      if ($auction_id[$num] == $item_id){
+        $num_bids = $true_bids[$num];
+        print_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_date);
       }
-  
-  else{
+      else {
+        continue;
+      }
+    }
     
-    for ($count = ($curr_page-1)*$results_per_page; $count<$num_queries;$count++){
-      $keyword_row = $keyword_rows[$count];
+    
 
-      $item_id= $keyword_row[0];
-      $title = $keyword_row[1];
-      $description= $keyword_row[2];
-      $end_date= new DateTime($keyword_row[3]);
-      $current_price= $keyword_row[4]; #CHANGE THIS TO CURRENT
-      $num_bids = $keyword_row[5];
-     
-      print_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_date);
-         
-          
-        }
-
+    
   }
+  mysqli_close($connection);
   
-}
-  
-
-// This uses a function defined in utilities.php
-
-    mysqli_close($connection);
-    
 ?>
 
-</ul>
-
-<!-- Pagination for results listings, displaying data on multiple pages -->
-<nav aria-label="Search results pages" class="mt-5">
-  <ul class="pagination justify-content-center">
-  
-<?php
-
-  // Copy any currently-set GET variables to the URL.
-  $querystring = "";
-  foreach ($_GET as $key => $value) {
-    if ($key != "page") {
-      $querystring .= "$key=$value&amp;";
-    }
-  }
-  
-  $high_page_boost = max(3 - $curr_page, 0);
-  $low_page_boost = max(2 - ($max_page - $curr_page), 0);
-  $low_page = max(1, $curr_page - 2 - $low_page_boost);
-  $high_page = min($max_page, $curr_page + 2 + $high_page_boost);
-  # if current page is not equal to 1, a label showing previous is visible, allowing you to go back to previous page
-  if ($curr_page != 1) {
-    echo('
-    <li class="page-item">
-      <a class="page-link" href="mylistings.php?' . $querystring . 'page=' . ($curr_page - 1) . '" aria-label="Previous">
-        <span aria-hidden="true"><i class="fa fa-arrow-left"></i></span>
-        <span class="sr-only">Previous</span>
-      </a>
-    </li>');
-  }
-  # $i++ is post-increment, i is de referenced and then incremented
-  for ($i = $low_page; $i <= $high_page; $i++) {
-    if ($i == $curr_page) {
-      // Highlight the link
-      echo('
-    <li class="page-item active">');
-    }
-    else {
-      // Non-highlighted link
-      echo('
-    <li class="page-item">');
-    }
-    
-    // Do this in any case
-    echo('
-      <a class="page-link" href="mylistings.php?' . $querystring . 'page=' . $i . '">' . $i . '</a>
-    </li>');
-  }
-   # if current page is not equal to the max page, a label showing next is visible, allowing you to go to next page
-  if ($curr_page != $max_page) {
-    echo('
-    <li class="page-item">
-      <a class="page-link" href="mylistings.php?' . $querystring . 'page=' . ($curr_page + 1) . '" aria-label="Next">
-        <span aria-hidden="true"><i class="fa fa-arrow-right"></i></span>
-        <span class="sr-only">Next</span>
-      </a>
-    </li>');
-  }
-?>
-
-  </ul>
-</nav>
-
-
-</div>
-
-
-<!-- includes code from footer file -->
 <?php include_once("footer.php")?>
-  
