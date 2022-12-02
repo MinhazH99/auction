@@ -40,6 +40,17 @@
           </div>
         </div>
         <div class="form-group row">
+          <label for="itemcondition" class="col-sm-2 col-form-label text-right">Item Condition</label>
+          <div class="col-sm-10">
+            <select class="form-control" id="itemcondition" name = "item_condition">
+              <option selected>Choose...</option>
+              <option value="New">New</option>
+              <option value="Used">Used</option>
+            </select>
+            <small id="categoryHelp" class="form-text text-muted"><span class="text-danger">* Required.</span> Select a category for this item.</small>
+          </div>
+        </div>
+        <div class="form-group row">
           <label for="auctionCategory" class="col-sm-2 col-form-label text-right">Category</label>
           <div class="col-sm-10">
             <select class="form-control" id="auctionCategory" name = "category_name">

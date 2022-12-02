@@ -3,39 +3,14 @@
 
 <div class="container">
 
-<h2 class="my-3">My listings</h2>
-
-<div id="searchSpecs">
-<!-- When this form is submitted, this PHP page is what processes it.
-     Search/sort specs are passed to this page through parameters in the URL
-     (GET method of passing data to a page). -->
-<form method="get" action="mylistings.php"> <!-- form data sent as url variables, action is url of file that will process input -->
-  <div class="row">
-    <div class="col-md-5 pr-0"> <!-- medium column -->
-      <div class="form-group"> <!-- used for optimum spacing -->
-    <div class="col-md-3 pr-0">
-      <div class="form-inline">
-        <label class="mx-2" for="order_by">Sort by:</label>
-        <select name="order_by3" class="form-control" id="order_by">
-          <option selected value="open">Open Listings</option>
-          <option value="close">Expired Listings</option>
-        </select>
-      </div>
-    </div>
-    <div class="col-md-1 px-0">
-      <button type="submit" class="btn btn-primary">Search</button> <!-- button that says search, and submits query -->
-    </div>
-  </div>
-</form>
-</div> <!-- end search specs bar -->
+<h2 class="my-3">My Orders</h2>
 
 <?php
-  // This page is for showing a user the auction listings they've made.
+  // This page is for showing a user all the items that they have won on auction.
   // It will be pretty similar to browse.php, except there is no search bar.
   // This can be started after browse.php is working with a database.
   // Feel free to extract out useful functions from browse.php and put them in
   // the shared "utilities.php" where they can be shared by multiple files.
-
   
   
   // TODO: Check user's credentials (cookie/session).
@@ -55,32 +30,15 @@
   $connection = mysqli_connect($host, $username, $password, $dbname);
 
   $user = $_SESSION['user_id'];
-  $current_date = "CURRENT_TIMESTAMP";
-
-  if(!isset($_GET['order_by3']) || $_GET['order_by3'] == "open"){
-    $count_bids_query = "SELECT auctions.auction_id, auctions.auction_status,item_name,item_desc,expirationDate,starting_price, COUNT(bids.bid_id) AS 'truenumbids'
-    FROM auctions
-    LEFT JOIN categories ON categories.category_id = auctions.category_id
-    LEFT JOIN bids ON bids.auction_id = auctions.auction_id
-    WHERE auctions.user_id = $user
-    AND $current_date < expirationDate
-    GROUP BY auctions.auction_id
-    ORDER BY auctions.expirationDate DESC";
-  }
-
-  else{
-    $auction_status = "Closed";
   
-
-  $count_bids_query = "SELECT auctions.auction_id, auctions.auction_status,item_name,item_desc,expirationDate,starting_price, COUNT(bids.bid_id) AS 'truenumbids'
+  
+  $count_bids_query = "SELECT auctions.auction_id, item_name,item_desc,expirationDate,starting_price, COUNT(bids.bid_id) AS 'truenumbids'
   FROM auctions
   LEFT JOIN categories ON categories.category_id = auctions.category_id
   LEFT JOIN bids ON bids.auction_id = auctions.auction_id
   WHERE auctions.user_id = $user
-  AND $current_date > expirationDate
-  GROUP BY auctions.auction_id
-  ORDER BY auctions.expirationDate DESC";;
-  }
+  GROUP BY auctions.auction_id";
+  
   
   if (!isset($_GET['page'])) {
     $curr_page = 1; #php variable
@@ -115,7 +73,7 @@ if ($num_queries==0){
   $max_page = 1;
   echo('
     <li class="list-group-item d-flex justify-content-center">
-    <div class="p-2 mr-5"><h5><center>You have not listed any items</center></h5>
+    <div class="p-2 mr-5"><h5><center>Items won from auctions will be shown on this page</center></h5>
     </div>
     
   </li>'
@@ -143,11 +101,11 @@ else {
       
       
       $item_id= $keyword_row[0];
-      $title = $keyword_row[2];
-      $description= $keyword_row[3];
-      $end_date= new DateTime($keyword_row[4]);
-      $current_price= $keyword_row[5]; #CHANGE THIS TO CURRENT
-      $num_bids = $keyword_row[6];
+      $title = $keyword_row[1];
+      $description= $keyword_row[2];
+      $end_date= new DateTime($keyword_row[3]);
+      $current_price= $keyword_row[4]; #CHANGE THIS TO CURRENT
+      $num_bids = $keyword_row[5];
       
       print_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_date);
 
@@ -160,11 +118,11 @@ else {
       $keyword_row = $keyword_rows[$count];
 
       $item_id= $keyword_row[0];
-      $title = $keyword_row[2];
-      $description= $keyword_row[3];
-      $end_date= new DateTime($keyword_row[4]);
-      $current_price= $keyword_row[5]; #CHANGE THIS TO CURRENT
-      $num_bids = $keyword_row[6];
+      $title = $keyword_row[1];
+      $description= $keyword_row[2];
+      $end_date= new DateTime($keyword_row[3]);
+      $current_price= $keyword_row[4]; #CHANGE THIS TO CURRENT
+      $num_bids = $keyword_row[5];
      
       print_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_date);
          
