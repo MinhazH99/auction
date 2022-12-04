@@ -51,25 +51,20 @@ common php functions:
 	place_bid.php
     listing.php
 	watchlist_funcs.php
-
+	page navigation in browse
+	add my watchlist button -> Minhaz
+	show expired auctions in mylisting php
+	remove user_status (auctions) -> all
+	remove watch id (watch) -> all
     INCOMPLETED:
    
 
    
 
     CURRENTLY WORKING ON/ NEED TO IMPLEMENT:
-	page navigation in browse -> Hamzah
-	add my watchlist button -> Minhaz
-	add my orders button -> Minhaz
-	
-	recommendations.php -> Mevrick
-	
-	show expired auctions in my listing php
-
+	recommendations.php -> 
 	email.php -> Mevrick
-
-	remove user_status (auctions) -> all
-	remove watch id (watch) -> all
+	fix the watchlist in listing (check if listing is done) -> Mevrick
 
 	make website look peng    
     -> add images
