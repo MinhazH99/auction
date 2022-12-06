@@ -56,6 +56,19 @@
   if(isset($_SESSION['user_id'])){
     $has_session = True;
     // $query = "SELECT "
+    $query = "SELECT CASE WHEN EXISTS ( SELECT * FROM `watch` WHERE `user_id` = {$_SESSION['user_id']} AND `auction_id` = {$item_id} ) THEN 'TRUE' ELSE 'FALSE' END AS 'watch_status'";
+    $watch_status = $connection->query($query);
+    $row = $watch_status->fetch_assoc();
+
+    echo $row['watch_status'];
+    var_dump($row);
+
+    if ($row['watch_status']=='TRUE'){
+      echo 'this should return true';
+      $watching = True;
+    } else {
+      echo 'this should not be printed when true';
+    }
   }
 ?>
 
