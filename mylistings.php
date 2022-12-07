@@ -11,10 +11,8 @@
      (GET method of passing data to a page). -->
 <form method="get" action="mylistings.php"> <!-- form data sent as url variables, action is url of file that will process input -->
   <div class="row">
-    <div class="col-md-5 pr-0"> <!-- medium column -->
+    <div class="col-md-2 pr-0"> <!-- medium column -->
       <div class="form-group"> <!-- used for optimum spacing -->
-    <div class="col-md-3 pr-0">
-      <div class="form-inline">
         <label class="mx-2" for="order_by">Sort by:</label>
         <select name="order_by3" class="form-control" id="order_by">
           <option selected value="open">Open Listings</option>

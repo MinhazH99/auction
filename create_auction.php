@@ -42,11 +42,14 @@
         <div class="form-group row">
           <label for="itemcondition" class="col-sm-2 col-form-label text-right">Item Condition</label>
           <div class="col-sm-10">
-            <select class="form-control" id="itemcondition" name = "item_condition">
-              <option selected>Choose...</option>
-              <option value="New">New</option>
-              <option value="Used">Used</option>
-            </select>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="item_condition" id="itemcondition" value="New" checked>
+              <label class="form-check-label" for="itemcondition">New</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="item_condition" id="itemcondition" value="Used">
+                <label class="form-check-label" for="itemcondition">Used</label>
+              </div>
             <small id="categoryHelp" class="form-text text-muted"><span class="text-danger">* Required.</span> Select a category for this item.</small>
           </div>
         </div>

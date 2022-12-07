@@ -34,7 +34,7 @@ if ($seller_id === $buyer_id){
 
 // checking if bid price is greater than current_price
 if ($current_price < $bid_price){
-    $submit_bid = "INSERT INTO `bids`(`bid_price`, `auction_id`, `user_id`, `user_status`) VALUES ('{$bid_price}','{$item_id}','{$buyer_id}','Winner')";
+    $submit_bid = "INSERT INTO `bids`(`bid_price`, `auction_id`, `user_id`) VALUES ('{$bid_price}','{$item_id}','{$buyer_id}')";
     $updateQuery = "UPDATE `auctions` SET `starting_price`={$bid_price} WHERE auction_id = {$item_id}";
     $resultObj = $connection->query($submit_bid);
     $resultObj = $connection->query($updateQuery);
