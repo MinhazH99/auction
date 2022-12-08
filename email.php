@@ -18,7 +18,7 @@
 
     $mail -> setFrom('db.20223.mev@gmail.com'); //gmail
 
-    $mail -> addAddress('exacter1990@gmail.com');
+    $mail -> addAddress($row);
 
     $mail->isHTML(true);
 

@@ -32,11 +32,11 @@
   $user = $_SESSION['user_id'];
   
   
-  $count_bids_query = "SELECT auctions.auction_id, item_name,item_desc,expirationDate,starting_price, COUNT(bids.bid_id) AS 'truenumbids'
-  FROM auctions
-  LEFT JOIN categories ON categories.category_id = auctions.category_id
-  LEFT JOIN bids ON bids.auction_id = auctions.auction_id
-  WHERE auctions.user_id = $user
+  $count_bids_query = "SELECT bid_id,bid_price,bids.auction_id,bids.user_id,bids.bid_time,auctions.auction_id, auctions.item_name,auctions.item_desc,auctions.expirationDate,auctions.starting_price, COUNT(bids.bid_id) AS 'truenumbids' FROM bids
+  JOIN auctions ON auctions.auction_id = bids.auction_id
+  WHERE auctions.auction_status = 'Closed'
+  AND bid_price = starting_price
+  AND bids.user_id = $user
   GROUP BY auctions.auction_id";
   
   
@@ -100,12 +100,12 @@ else {
       $keyword_row = $keyword_rows[$count];
       
       
-      $item_id= $keyword_row[0];
-      $title = $keyword_row[1];
-      $description= $keyword_row[2];
-      $end_date= new DateTime($keyword_row[3]);
-      $current_price= $keyword_row[4]; #CHANGE THIS TO CURRENT
-      $num_bids = $keyword_row[5];
+      $item_id= $keyword_row[2];
+      $title = $keyword_row[6];
+      $description= $keyword_row[7];
+      $end_date= new DateTime($keyword_row[8]);
+      $current_price= $keyword_row[9]; #CHANGE THIS TO CURRENT
+      $num_bids = $keyword_row[10];
       
       print_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_date);
 
@@ -117,12 +117,12 @@ else {
     for ($count = ($curr_page-1)*$results_per_page; $count<$num_queries;$count++){
       $keyword_row = $keyword_rows[$count];
 
-      $item_id= $keyword_row[0];
-      $title = $keyword_row[1];
-      $description= $keyword_row[2];
-      $end_date= new DateTime($keyword_row[3]);
-      $current_price= $keyword_row[4]; #CHANGE THIS TO CURRENT
-      $num_bids = $keyword_row[5];
+      $item_id= $keyword_row[2];
+      $title = $keyword_row[6];
+      $description= $keyword_row[7];
+      $end_date= new DateTime($keyword_row[8]);
+      $current_price= $keyword_row[9]; #CHANGE THIS TO CURRENT
+      $num_bids = $keyword_row[10];
      
       print_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_date);
          
