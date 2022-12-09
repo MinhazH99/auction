@@ -37,22 +37,24 @@
   $connection = mysqli_connect('localhost','root','','auction')
   or die('Error connecting to MySQL server: ' . mysqli_error());
   $user_id = $_SESSION['user_id'];
-  #Inspired using https://arctype.com/blog/collaborative-filtering-tutorial/
+  
 
-  $keyword_query = "SELECT bids.user_id, auctions.auction_id, category_name, item_name, item_desc, 
+  $keyword_query = "SELECT bids.user_id, auctions.auction_id, 
+  category_name, item_name, item_desc, 
   starting_price,expirationDate, COUNT(bids.bid_id) AS 'numbids'
   FROM auctions, categories, bids
   WHERE categories.category_id = auctions.category_id
   AND bids.auction_id = auctions.auction_id
   AND auctions.user_id != $user_id
-  
   AND expirationDate > CURRENT_DATE()
+
   AND categories.category_id IN (SELECT category_name
   FROM auctions, categories, bids
   WHERE categories.category_id = auctions.category_id
   AND bids.auction_id = auctions.auction_id
   AND bids.user_id = $user_id
   GROUP BY bids.bid_id)
+
   AND auctions.auction_id NOT IN (SELECT auctions.auction_id
   FROM auctions, categories, bids
   WHERE categories.category_id = auctions.category_id
@@ -76,6 +78,7 @@
   $num_queries = mysqli_num_rows($keyword_result);
   $results_per_page = 10;
 
+ 
 
   $keyword_rows = $keyword_result -> fetch_all(MYSQLI_NUM);
   
@@ -116,7 +119,7 @@
         $bid_user_id = $keyword_row[0];
         $item_id= $keyword_row[1];
         $category = $keyword_row[2];
-        
+       
   
         $title = $keyword_row[3];
         $description= $keyword_row[4];
@@ -132,7 +135,7 @@
            
         
           }
-        
+        #}
     else{
       
       for ($count = ($curr_page-1)*$results_per_page; $count<$num_queries;$count++){
@@ -142,7 +145,7 @@
         $bid_user_id = $keyword_row[0];
         $item_id= $keyword_row[1];
         $category = $keyword_row[2];
-      
+       
   
         $title = $keyword_row[3];
         $description= $keyword_row[4];
@@ -153,7 +156,7 @@
 
   
         print_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_date);
-      
+       
             
           }
   
@@ -176,7 +179,8 @@
 
   
   mysqli_close($connection);
-
+  
+  #echo $num_queries;
  
 
 
