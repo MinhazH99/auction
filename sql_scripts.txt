@@ -116,3 +116,11 @@ INSERT INTO `categories` (`category_id`, `category_name`) VALUES (NULL, 'Sports 
 INSERT INTO `categories` (`category_id`, `category_name`) VALUES (NULL, 'Technology');
 INSERT INTO `categories` (`category_id`, `category_name`) VALUES (NULL, 'Toys, Children & Baby');
 
+
+-mySQL event scheduler
+
+SET GLOBAL event_scheduler = ON;
+CREATE EVENT update_auction
+ON SCHEDULE EVERY 60 SECOND
+DO 
+UPDATE auctions SET auction_status = "Closed" WHERE CURRENT_TIMESTAMP > expirationDate; 

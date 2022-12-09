@@ -12,9 +12,10 @@
   }
 
   // TODO: Use item_id to make a query to the database.
-  $query = "SELECT auctions.starting_price, auctions.expirationDate, auctions.reserve_price, auctions.item_name, auctions.item_desc FROM auctions WHERE auctions.auction_id = {$item_id}";
+  $query = "SELECT auctions.starting_price, auctions.expirationDate, auctions.reserve_price, auctions.item_name, auctions.item_desc, auctions.reserve_price FROM auctions WHERE auctions.auction_id = {$item_id}";
   $resultObj = $connection->query($query);
   $row = $resultObj->fetch_assoc();
+  $reserve_price = $row['reserve_price'];
 
   if (!$row){
     echo "item not found!";
@@ -42,9 +43,7 @@
   // query from the bids table
   // add in 
 
-  $current_price = $row['starting_price'];
-  // $num_bids = 1000;
-  
+  $current_price = $row['starting_price']; 
 
 
   // TODO: If the user has a session, use it to make a query to the database
@@ -60,14 +59,8 @@
     $watch_status = $connection->query($query);
     $row = $watch_status->fetch_assoc();
 
-    echo $row['watch_status'];
-    var_dump($row);
-
     if ($row['watch_status']=='TRUE'){
-      echo 'this should return true';
       $watching = True;
-    } else {
-      echo 'this should not be printed when true';
     }
   }
 ?>
@@ -110,23 +103,35 @@
     <p>
     
     <!-- place holder data for now -->
-    <?php $sold = FALSE;
-    $sold_price = 400;
+    <?php
+    $query = "SELECT `user_id` FROM `bids` WHERE auction_id = {$item_id} AND `bid_price` = {$current_price}";
+    $no_bids = $connection->query($query);
+    $winning_bid = $no_bids->fetch_assoc();
+  
+    $sold = False;
+    
+    if ($winning_bid && (int) $reserve_price <= (int) $current_price){
+      $sold = True;  
+    }
     ?>
-
+    
 <?php if ($now > $end_time): ?>
      This auction ended <?php echo(date_format($end_time, 'j M H:i')) ?>
-     <!-- TODO: Print the result of the auction here? -->
+     <!-- TODO: Print the result of the auction here? --> 
      <?php if ($sold){ ?>
-      <p class="lead"><?=$title?> sold at £<?php echo(number_format($sold_price, 2)) ?></p>
-     <?php } else ?>
-      <p class="lead"><?=$title?> did not sell at £<?=$current_price?></p>
+      <p class="lead"><?=$title?> sold at £<?php echo(number_format($current_price, 2)) ?></p>
+      <p class="lead"><?=$title?> The winner was MHM User: <?php echo($winning_bid['user_id']) ?></p>
 
+     <?php } else { ?>
+      <p class="lead"><?=$title?> did not sell at £<?php echo(number_format($current_price, 2)) ?></p>
+     <?php } ?>
 
 <?php else: ?>
      Auction ends <?php echo(date_format($end_time, 'j M H:i') . $time_remaining) ?></p>
         <p class="lead">Current bid: £<?php echo(number_format($current_price, 2)) ?></p>
-
+        <?php if ($winning_bid){?>
+          <p class="lead"><?=$title?> The current winner is MHM User: <?php echo($winning_bid['user_id']) ?></p>
+        <?php } ?>
     <!-- Bidding form -->
     <form method="POST" action="place_bid.php">
       <div class="input-group">

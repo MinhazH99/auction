@@ -20,7 +20,7 @@
         </select>
       </div>
     </div>
-    <div class="col-md-1 px-0">
+    <div class="col-md-2 pr-0">
       <button type="submit" class="btn btn-primary">Search</button> <!-- button that says search, and submits query -->
     </div>
   </div>
