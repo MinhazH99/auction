@@ -116,22 +116,22 @@
     }
 
     // $find_sellers_details = "SELECT `email`, `first_name` FROM `users` WHERE `user_id` IN ({$seller_ID}, {$buyer_id})";
-    $find_seller_details = "SELECT `email`, `first_name` FROM `users` WHERE `user_id` = {$seller_ID}";
-    $email_obj = $connection->query($find_seller_details);
+    // $find_seller_details = "SELECT `email`, `first_name` FROM `users` WHERE `user_id` = {$seller_ID}";
+    // $email_obj = $connection->query($find_seller_details);
 
-    $row = $email_obj->fetch_assoc();
-    $sellerEmail = $row['email'];
-    $sellerName = $row['first_name'];
+    // $row = $email_obj->fetch_assoc();
+    // $sellerEmail = $row['email'];
+    // $sellerName = $row['first_name'];
     
-    $find_buyer_details = "SELECT `email`, `first_name` FROM `users` WHERE `user_id` = {$winning_bid['user_id']}";
-    $email_obj = $connection->query($find_buyer_details);
+    // $find_buyer_details = "SELECT `email`, `first_name` FROM `users` WHERE `user_id` = {$winning_bid['user_id']}";
+    // $email_obj = $connection->query($find_buyer_details);
 
-    if ($email_obj){
-      $row2 = $email_obj->fetch_assoc();
-      $buyerEmail = $row2['email'];
-      $buyerName = $row2['first_name'];  
-    }
-    ?>
+    // if ($email_obj){
+    //   $row2 = $email_obj->fetch_assoc();
+    //   $buyerEmail = $row2['email'];
+    //   $buyerName = $row2['first_name'];  
+    // }
+    // ?>
     
 <?php if ($now > $end_time): ?>
      This auction ended <?php echo(date_format($end_time, 'j M H:i')) ?>
@@ -139,11 +139,7 @@
      <?php if ($sold){ ?>
       <p class="lead"><?=$title?> sold at £<?php echo(number_format($current_price, 2)) ?></p>
       <p class="lead"><?=$title?> The winner was MHM User: <?php echo($winning_bid['user_id']) ?></p>
-     <?php seller_email($item_id, $sellerEmail, $sellerName);
-      buyer_email($item_id, $buyerEmail, $buyerName);
-      } else { 
-        no_sale($sellerEmail, $sellerName);  
-      ?>
+     <?php } else { ?>
       <p class="lead"><?=$title?> did not sell at £<?php echo(number_format($current_price, 2)) ?></p>
      <?php } ?>
 
