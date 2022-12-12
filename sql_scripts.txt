@@ -124,3 +124,6 @@ CREATE EVENT update_auction
 ON SCHEDULE EVERY 60 SECOND
 DO 
 UPDATE auctions SET auction_status = "Closed" WHERE CURRENT_TIMESTAMP > expirationDate; 
+
+
+ALTER TABLE `auctions` ADD `auction_email` BOOLEAN NULL DEFAULT FALSE AFTER `user_id`;
