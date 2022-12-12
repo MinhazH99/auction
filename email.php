@@ -12,7 +12,7 @@
 
 
 
-function all_watch_lists($firstName, $email, $itemName){
+function all_watch_lists($firstName, $email, $auctionID, $itemName){
     $mail = new PHPMailer(true);
 
     $mail -> isSMTP();
@@ -30,7 +30,7 @@ function all_watch_lists($firstName, $email, $itemName){
     $mail -> isHTML(true);
 
     $mail -> Subject = 'Auction update: new bid on '.$itemName;
-    $mail -> Body = "Hello ".$firstName.", <br><br> There's a new high bid on <a href='http://localhost/auction/listing.php?auction_id=".$itemName."'> auction</a> you are watching.<br><br>
+    $mail -> Body = "Hello ".$firstName.", <br><br> There's a new high bid on <a href='http://localhost/auction/listing.php?auction_id=".$auctionID."'> auction</a> $itemName.<br><br>
     If you are still interested in this item, please log in to place a new bid. 
     <br><br>
     You are receiving this e-mail because ".$itemName." is in your watchlist, to stop recieving email notifications 
@@ -43,7 +43,7 @@ function all_watch_lists($firstName, $email, $itemName){
 
 }
 
-function buyer_email($itemName, $email, $firstName){
+function buyer_email($itemName, $email, $firstName, $secondName){
 
     $mail = new PHPMailer(true);
 
@@ -57,10 +57,10 @@ function buyer_email($itemName, $email, $firstName){
 
     $mail -> setFrom('db.20223.mev@gmail.com', 'MHM Goods');
 
-    $mail->addAddress($email, $firstName);
+    $mail->addAddress($email, $firstName, $lastName);
     $mail->isHTML(true);
     $mail->Subject = "You won the ".$itemName;
-    $mail->Body = "Hey ".$firstName." you have won the following item ".$itemName."<br><br> Please log in to pay
+    $mail->Body = "Hey ".$firstName." ".$lastName." you have won the following item ".$itemName."<br><br> Please log in to pay
     for this item
     
     Kind regards,
@@ -70,7 +70,7 @@ function buyer_email($itemName, $email, $firstName){
     $mail->send();
 }
 
-function seller_email($itemName, $email, $firstName) {
+function seller_email($itemName, $email, $firstName, $secondName) {
     $mail = new PHPMailer(true);
 
     $mail -> isSMTP();
@@ -92,7 +92,7 @@ function seller_email($itemName, $email, $firstName) {
     $mail->send();
 }
 
-function no_sale($email, $firstName){
+function no_sale($itemName, $email, $firstName, $lastName, $auctionID, $bidPrice){
     $mail = new PHPMailer(true);
 
     $mail -> isSMTP();
@@ -107,7 +107,8 @@ function no_sale($email, $firstName){
 
     $mail -> addAddress($email, $firstName);
     $mail -> isHTML(true);
-    $mail -> Body = 'item did not sell';
+    $mail -> Body = "Hey ".$firstName." ".$lastName.",<br><br> Unfortunately the auction for <a href='http://localhost/auction/listing.php?auction_id=".$auctionID."'> $itemName </a> did not sell. <br><br>
+    The latest price was ".$bidPrice.".";
 
     $mail->send();
 }
