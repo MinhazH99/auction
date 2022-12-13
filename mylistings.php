@@ -67,7 +67,7 @@
   }
 
   else{
-    $auction_status = "Closed";
+
   
 
   $count_bids_query = "SELECT auctions.auction_id,item_name,item_desc,expirationDate,starting_price, COUNT(bids.bid_id) AS 'truenumbids'

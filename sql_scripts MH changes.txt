@@ -24,10 +24,8 @@ CREATE TABLE users(
 
 CREATE TABLE auctions(
 	 auction_id INT UNSIGNED AUTO_INCREMENT NOT NULL,	 
-	 -- current_price DECIMAL(10,2) UNSIGNED NOT NULL, --  highest bid price
 	 item_name VARCHAR(100) NOT NULL,
 	 item_desc VARCHAR(2000) NOT NULL,
-	 image LONGBLOB,
 	 item_condition ENUM('New', 'Used'), --  have to modify create_auction.php page and the forum
 	 starting_price DECIMAL(10,2) UNSIGNED NOT NULL,
 	 reserve_price DECIMAL(10,2) UNSIGNED NOT NULL,
@@ -35,10 +33,9 @@ CREATE TABLE auctions(
 	 watch_id INT,
 	 category_id INT,
 	 user_id INT,
+	 auction_email BOOLEAN NULL DEFAULT FALSE,
 	 PRIMARY KEY(auction_id)
 
-	 --  how to find the winner of an auction and update auction table??
-	 --  can show the total number for current bids for an auction on the website via a mysql query. "X" many people have bid on this
 
 );
 
