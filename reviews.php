@@ -16,10 +16,11 @@
               <option selected>Choose...</option>
               <?php
                 $user = $_SESSION['user_id'];
+                $current_date = "CURRENT_TIMESTAMP";
 
                 $query = "SELECT item_name FROM bids
                 JOIN auctions ON auctions.auction_id = bids.auction_id
-                WHERE auctions.auction_status = 'Closed'
+                WHERE $current_date > expirationDate
                 AND bid_price = starting_price
                 AND bids.user_id = $user
                 GROUP BY auctions.auction_id";
