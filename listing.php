@@ -1,21 +1,23 @@
 <?php include_once("header.php")?>
 <?php require("utilities.php")?>
-<?php require("requirements/dbInformation.php")?> 
+<?php require("requirements/dbInformation.php")?>
+<?php require("email.php")?>
 
 <?php
   // Get info from the URL:   
   $item_id = $_GET['auction_id'];
 
   if (!$item_id){
-    // header("Location: browse.php")
+    header("Location: browse.php");
     echo 'This item_id does not exist';
   }
 
   // TODO: Use item_id to make a query to the database.
-  $query = "SELECT auctions.starting_price, auctions.expirationDate, auctions.reserve_price, auctions.item_name, auctions.item_desc, auctions.reserve_price FROM auctions WHERE auctions.auction_id = {$item_id}";
+  $query = "SELECT auctions.starting_price, auctions.expirationDate, auctions.reserve_price, auctions.item_name, auctions.item_desc, auctions.reserve_price, auctions.user_id FROM auctions WHERE auctions.auction_id = {$item_id}";
   $resultObj = $connection->query($query);
   $row = $resultObj->fetch_assoc();
   $reserve_price = $row['reserve_price'];
+  $seller_ID = $row['user_id'];
 
   if (!$row){
     echo "item not found!";
@@ -65,7 +67,6 @@
   }
 ?>
 
-
 <div class="container">
 
 <div class="row"> <!-- Row #1 with auction title + watch button -->
@@ -102,7 +103,6 @@
 
     <p>
     
-    <!-- place holder data for now -->
     <?php
     $query = "SELECT `user_id` FROM `bids` WHERE auction_id = {$item_id} AND `bid_price` = {$current_price}";
     $no_bids = $connection->query($query);
@@ -111,9 +111,27 @@
     $sold = False;
     
     if ($winning_bid && (int) $reserve_price <= (int) $current_price){
-      $sold = True;  
+      $sold = True;
+        
     }
-    ?>
+
+    // $find_sellers_details = "SELECT `email`, `first_name` FROM `users` WHERE `user_id` IN ({$seller_ID}, {$buyer_id})";
+    // $find_seller_details = "SELECT `email`, `first_name` FROM `users` WHERE `user_id` = {$seller_ID}";
+    // $email_obj = $connection->query($find_seller_details);
+
+    // $row = $email_obj->fetch_assoc();
+    // $sellerEmail = $row['email'];
+    // $sellerName = $row['first_name'];
+    
+    // $find_buyer_details = "SELECT `email`, `first_name` FROM `users` WHERE `user_id` = {$winning_bid['user_id']}";
+    // $email_obj = $connection->query($find_buyer_details);
+
+    // if ($email_obj){
+    //   $row2 = $email_obj->fetch_assoc();
+    //   $buyerEmail = $row2['email'];
+    //   $buyerName = $row2['first_name'];  
+    // }
+    // ?>
     
 <?php if ($now > $end_time): ?>
      This auction ended <?php echo(date_format($end_time, 'j M H:i')) ?>
@@ -121,7 +139,6 @@
      <?php if ($sold){ ?>
       <p class="lead"><?=$title?> sold at £<?php echo(number_format($current_price, 2)) ?></p>
       <p class="lead"><?=$title?> The winner was MHM User: <?php echo($winning_bid['user_id']) ?></p>
-
      <?php } else { ?>
       <p class="lead"><?=$title?> did not sell at £<?php echo(number_format($current_price, 2)) ?></p>
      <?php } ?>

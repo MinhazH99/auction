@@ -32,7 +32,6 @@ CREATE TABLE auctions(
 	 starting_price DECIMAL(10,2) UNSIGNED NOT NULL,
 	 reserve_price DECIMAL(10,2) UNSIGNED NOT NULL,
 	 expirationDate DATETIME,
-	 auction_status ENUM('Open', 'Closed') NOT NULL,
 	 watch_id INT,
 	 category_id INT,
 	 user_id INT,
