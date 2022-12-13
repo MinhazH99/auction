@@ -33,7 +33,6 @@ $category_name = $_POST["category_name"];
 $starting_price = filter_input(INPUT_POST,"starting_price",FILTER_VALIDATE_FLOAT);
 $reserve_price = filter_input(INPUT_POST,"starting_price",FILTER_VALIDATE_FLOAT);
 $expirationDate = date("Y-m-d H:i:s", strtotime($_POST["expirationDate"]));
-$auction_status = "Open";
 
 /*var_dump($item_name,$item_desc,$category_name,$starting_price,$reserve_price,$expirationDate,$auction_status, $user); */
       
@@ -41,7 +40,7 @@ $auction_status = "Open";
 /* TODO #3: If everything looks good, make the appropriate call to insert
             data into the database. */
 
-$query = "INSERT INTO auctions (item_name,item_desc,user_id,item_condition, category_id, starting_price, reserve_price, expirationDate, auction_status) VALUES ('$item_name', '$item_desc', $user, '$item_condition', (SELECT category_id FROM auction.categories WHERE category_name = '$category_name'), $starting_price, $reserve_price, '$expirationDate','$auction_status')";
+$query = "INSERT INTO auctions (item_name,item_desc,user_id,item_condition, category_id, starting_price, reserve_price, expirationDate) VALUES ('$item_name', '$item_desc', $user, '$item_condition', (SELECT category_id FROM auction.categories WHERE category_name = '$category_name'), $starting_price, $reserve_price, '$expirationDate')";
 
 
 /*$query3 = "INSERT INTO auctions (starting_price, reserve_price,expirationDate, auction_status,item_id) VALUES ($starting_price, $reserve_price, '$expirationDate','$auction_status', (SELECT item_id FROM auction.items WHERE user_id = '$user' AND item_name = '$item_name' AND item_desc = '$item_desc'))"; */

@@ -65,6 +65,9 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] == true) {
 	<li class="nav-item mx-1">
       <a class="nav-link" href="myorders.php">My Orders</a>
     </li>
+  	<li class="nav-item mx-1">
+      <a class="nav-link" href="reviews.php">Place Review</a>
+    </li>
     <li class="nav-item mx-1">
       <a class="nav-link" href="mywatchlist.php">My Watchlist</a>
   </li>

@@ -30,11 +30,12 @@
   $connection = mysqli_connect($host, $username, $password, $dbname);
 
   $user = $_SESSION['user_id'];
+  $current_date = "CURRENT_TIMESTAMP";
   
   
   $count_bids_query = "SELECT bid_id,bid_price,bids.auction_id,bids.user_id,bids.bid_time,auctions.auction_id, auctions.item_name,auctions.item_desc,auctions.expirationDate,auctions.starting_price, COUNT(bids.bid_id) AS 'truenumbids' FROM bids
   JOIN auctions ON auctions.auction_id = bids.auction_id
-  WHERE auctions.auction_status = 'Closed'
+  WHERE $current_date > expirationDate
   AND bid_price = starting_price
   AND bids.user_id = $user
   GROUP BY auctions.auction_id";
