@@ -57,10 +57,10 @@ function buyer_email($itemName, $email, $firstName, $secondName){
 
     $mail -> setFrom('db.20223.mev@gmail.com', 'MHM Goods');
 
-    $mail->addAddress($email, $firstName, $lastName);
+    $mail->addAddress($email, $firstName, $secondName);
     $mail->isHTML(true);
     $mail->Subject = "You won the ".$itemName;
-    $mail->Body = "Hey ".$firstName." ".$lastName." you have won the following item ".$itemName."<br><br> Please log in to pay
+    $mail->Body = "Hey ".$firstName." ".$secondName." you have won the following item ".$itemName."<br><br> Please log in to pay
     for this item
     
     Kind regards,
@@ -92,7 +92,7 @@ function seller_email($itemName, $email, $firstName, $secondName) {
     $mail->send();
 }
 
-function no_sale($itemName, $email, $firstName, $lastName, $auctionID, $bidPrice){
+function no_sale($itemName, $email, $firstName, $secondName, $auctionID, $bidPrice){
     $mail = new PHPMailer(true);
 
     $mail -> isSMTP();
@@ -107,7 +107,7 @@ function no_sale($itemName, $email, $firstName, $lastName, $auctionID, $bidPrice
 
     $mail -> addAddress($email, $firstName);
     $mail -> isHTML(true);
-    $mail -> Body = "Hey ".$firstName." ".$lastName.",<br><br> Unfortunately the auction for <a href='http://localhost/auction/listing.php?auction_id=".$auctionID."'> $itemName </a> did not sell. <br><br>
+    $mail -> Body = "Hey ".$firstName." ".$secondName.",<br><br> Unfortunately the auction for <a href='http://localhost/auction/listing.php?auction_id=".$auctionID."'> $itemName </a> did not sell. <br><br>
     The latest price was ".$bidPrice.".";
 
     $mail->send();
