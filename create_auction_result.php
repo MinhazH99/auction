@@ -31,7 +31,7 @@ $item_desc = $_POST["item_desc"];
 $item_condition = $_POST["item_condition"];
 $category_name = $_POST["category_name"];
 $starting_price = filter_input(INPUT_POST,"starting_price",FILTER_VALIDATE_FLOAT);
-$reserve_price = filter_input(INPUT_POST,"starting_price",FILTER_VALIDATE_FLOAT);
+$reserve_price = filter_input(INPUT_POST,"reserve_price",FILTER_VALIDATE_FLOAT);
 $expirationDate = date("Y-m-d H:i:s", strtotime($_POST["expirationDate"]));
 
 /*var_dump($item_name,$item_desc,$category_name,$starting_price,$reserve_price,$expirationDate,$auction_status, $user); */
