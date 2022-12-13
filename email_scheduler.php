@@ -5,8 +5,8 @@
 
 
 <?php
-
-$query = "SELECT auctions.auction_id, auctions.item_name, auctions.starting_price, auctions.reserve_price, users.email, users.first_name, users.last_name FROM auctions JOIN users ON auctions.user_id = users.user_id WHERE auctions.auction_email = 0 AND auctions.auction_status = 'Closed'";
+$current_date = "CURRENT_TIMESTAMP";
+$query = "SELECT auctions.auction_id, auctions.item_name, auctions.starting_price, auctions.reserve_price, users.email, users.first_name, users.last_name FROM auctions JOIN users ON auctions.user_id = users.user_id WHERE auctions.auction_email = 0 AND auctions.expirationDate < {$current_date}";
 $auctions_obj = $connection->query($query)->fetch_all();
 
 foreach ($auctions_obj as $auction){
@@ -42,7 +42,7 @@ foreach ($auctions_obj as $auction){
     }
 
     // update the auction_email to 1 so we don't send duplicate emails
-    $updateQuery = "UPDATE `auctions` SET `auction_email` = '1' WHERE `auction_status` = 'Closed' AND `auction_email`= 0";
+    $updateQuery = "UPDATE `auctions` SET `auction_email` = '1' WHERE auctions.expirationDate < {$current_date} AND `auction_email`= 0";
     $action = $connection->query($updateQuery);
     
 }
