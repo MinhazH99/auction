@@ -91,7 +91,7 @@
     AND bids.user_id = $user_id
     GROUP BY bids.bid_id
     ORDER BY 
-    CASE WHEN '{$ordering}' = 'date' THEN auctions.expirationDate END ASC
+    CASE WHEN '{$ordering}' = 'date' THEN bids.bid_time END ASC
     ";
 
 
