@@ -63,8 +63,9 @@ function buyer_email($itemName, $email, $firstName, $secondName){
     $mail->Body = "Hey ".$firstName." ".$secondName." you have won the following item ".$itemName."<br><br> Please log in to pay
     for this item
     
+    <br><br>
     Kind regards,
-    
+    <br><br>
     MHM Goods";
     
     $mail->send();
@@ -87,8 +88,12 @@ function seller_email($itemName, $email, $firstName, $secondName) {
 
     $mail -> isHTML(true);
     $mail -> Subject = $itemName." has sold!";
-    $mail -> Body = "item has sold";
-
+    $mail -> Body = "Hey ".$firstName." ".$secondName.",<br><br> The auction for <a href='http://localhost/auction/listing.php?auction_id=".$auctionID."'> $itemName </a> has sold! <br><br>
+        The latest price was ".$bidPrice.".     
+        <br><br>
+        Kind regards,
+        <br><br>
+        MHM Goods";
     $mail->send();
 }
 
@@ -108,7 +113,11 @@ function no_sale($itemName, $email, $firstName, $secondName, $auctionID, $bidPri
     $mail -> addAddress($email, $firstName);
     $mail -> isHTML(true);
     $mail -> Body = "Hey ".$firstName." ".$secondName.",<br><br> Unfortunately the auction for <a href='http://localhost/auction/listing.php?auction_id=".$auctionID."'> $itemName </a> did not sell. <br><br>
-    The latest price was ".$bidPrice.".";
+    The latest price was ".$bidPrice.".     
+    <br><br>
+    Kind regards,
+    <br><br>
+    MHM Goods";
 
     $mail->send();
 }
