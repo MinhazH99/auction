@@ -34,7 +34,7 @@
   
   
   $count_bids_query = "SELECT bid_id,bid_price,bids.auction_id,
-  bids.user_id, bids.bid_time, auctions.auction_id, auctions.item_name, auctions.item_desc, auctions.expirationDate,auctions.starting_price,item_condition, COUNT(bids.bid_id) AS 'truenumbids' FROM bids,
+  bids.user_id, bids.bid_time, auctions.auction_id, auctions.item_name, auctions.item_desc, auctions.expirationDate,auctions.starting_price,item_condition, COUNT(bids.bid_id) AS 'truenumbids' FROM bids
   JOIN auctions ON auctions.auction_id = bids.auction_id
   WHERE $current_date > expirationDate
   AND bid_price = starting_price
