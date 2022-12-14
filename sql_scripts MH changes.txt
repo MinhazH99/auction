@@ -26,7 +26,7 @@ CREATE TABLE auctions(
 	 auction_id INT UNSIGNED AUTO_INCREMENT NOT NULL,	 
 	 item_name VARCHAR(100) NOT NULL,
 	 item_desc VARCHAR(2000) NOT NULL,
-	 item_condition ENUM('New', 'Used'), --  have to modify create_auction.php page and the forum
+	 item_condition ENUM('New', 'Used'),
 	 starting_price DECIMAL(10,2) UNSIGNED NOT NULL,
 	 reserve_price DECIMAL(10,2) UNSIGNED NOT NULL,
 	 expirationDate DATETIME,
@@ -78,7 +78,8 @@ CREATE TABLE watch(
 
 ALTER TABLE auctions
 ADD FOREIGN KEY (watch_id) REFERENCES watch(watch_id),
-ADD FOREIGN KEY (category_id) REFERENCES categories(category_id); 
+ADD FOREIGN KEY (category_id) REFERENCES categories(category_id)
+ADD FOREIGN KEY (user_id) REFERENCES users(user_id); 
 
 
 ALTER TABLE bids

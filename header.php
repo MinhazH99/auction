@@ -22,7 +22,7 @@
   <!-- Custom CSS file -->
   <link rel="stylesheet" href="css/custom.css">
 
-  <title>MHM Goods <!--CHANGEME!--></title>
+  <title>MHM Goods</title>
 </head>
 
 
@@ -30,7 +30,7 @@
 
 <!-- Navbars -->
 <nav class="navbar navbar-expand-lg navbar-light bg-light mx-2">
-  <a class="navbar-brand" href="#">MHM Goods <!--CHANGEME!--></a>
+  <a class="navbar-brand" href="#">MHM Goods</a>
   <ul class="navbar-nav ml-auto">
     <li class="nav-item">
     
