@@ -121,16 +121,28 @@ $bids_result = mysqli_query($connection, $count_bids_query)
 
 */
 
-  $keyword_query = "SELECT bids.user_id, auctions.auction_id, 
+/*$recommendations = "SELECT item_name from auctions WHERE item_name IN 
+  (SELECT item_name FROM auctions WHERE auction_id IN 
+  (SELECT auction_id FROM reviews WHERE rating >= 4 AND user_id IN 
+  (SELECT user_id FROM bids WHERE auction_id IN 
+  (SELECT auction_id FROM bids WHERE user_id = $user))))"; */
+
+ 
+ $keyword_query = "SELECT bids.user_id, auctions.auction_id, 
   category_name, item_name, item_desc, item_condition,
   starting_price,expirationDate, COUNT(bids.bid_id) AS 'numbids'
+  
+  
   FROM auctions, categories, bids
   WHERE categories.category_id = auctions.category_id
   AND bids.auction_id = auctions.auction_id
   AND auctions.user_id != $user_id
   AND expirationDate > CURRENT_DATE()
 
-  AND categories.category_id IN (SELECT category_name
+  AND bids.user_id IN (SELECT user_id FROM bids WHERE auction_id IN 
+  (SELECT auction_id FROM bids WHERE user_id = $user_id))
+
+  AND categories.category_id IN (SELECT categories.category_id
   FROM auctions, categories, bids
   WHERE categories.category_id = auctions.category_id
   AND bids.auction_id = auctions.auction_id
@@ -143,8 +155,12 @@ $bids_result = mysqli_query($connection, $count_bids_query)
   AND bids.auction_id = auctions.auction_id
   AND bids.user_id = $user_id
   GROUP BY bids.bid_id)
-  GROUP BY auctions.auction_id";
+  GROUP BY auctions.auction_id
 
+  ";
+/*
+  
+  */
 
   ?>
 
