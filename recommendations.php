@@ -122,7 +122,7 @@ $bids_result = mysqli_query($connection, $count_bids_query)
 */
 
   $keyword_query = "SELECT bids.user_id, auctions.auction_id, 
-  category_name, item_name, item_desc, 
+  category_name, item_name, item_desc, item_condition,
   starting_price,expirationDate, COUNT(bids.bid_id) AS 'numbids'
   FROM auctions, categories, bids
   WHERE categories.category_id = auctions.category_id
@@ -204,13 +204,14 @@ $bids_result = mysqli_query($connection, $count_bids_query)
   
         $title = $keyword_row[3];
         $description= $keyword_row[4];
-        $current_price= $keyword_row[5]; #CHANGE THIS TO CURRENT
-        $end_date= new DateTime($keyword_row[6]);
+        $item_cond = $keyword_row[5]
+        $current_price= $keyword_row[6]; #CHANGE THIS TO CURRENT
+        $end_date= new DateTime($keyword_row[7]);
   
-        $num_bids = $keyword_row[7];
+        $num_bids = $keyword_row[8];
 
   
-        print_recom_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_date);
+        print_listing_li($item_id, $title, $description, $item_cond, $current_price, $num_bids, $end_date);
         
         }
            
@@ -226,17 +227,18 @@ $bids_result = mysqli_query($connection, $count_bids_query)
         $bid_user_id = $keyword_row[0];
         $item_id= $keyword_row[1];
         $category = $keyword_row[2];
-        
-        
+     
+  
         $title = $keyword_row[3];
         $description= $keyword_row[4];
-        $current_price= $keyword_row[5]; #CHANGE THIS TO CURRENT
-        $end_date= new DateTime($keyword_row[6]);
+        $item_cond = $keyword_row[5]
+        $current_price= $keyword_row[6]; #CHANGE THIS TO CURRENT
+        $end_date= new DateTime($keyword_row[7]);
   
-        $num_bids = $keyword_row[7];
+        $num_bids = $keyword_row[8];
 
   
-        print_recom_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_date);
+        print_listing_li($item_id, $title, $description, $item_cond, $current_price, $num_bids, $end_date);
      
             
           }
