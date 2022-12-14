@@ -113,7 +113,12 @@
     
     if ($winning_bid && (int) $reserve_price <= (int) $current_price){
       $sold = True;
-        
+      $query = "SELECT `first_name`, `last_name`  FROM `users` WHERE `user_id` = {$winning_bid['user_id']}";
+      $action = $connection->query($query);
+      $buyerName = $action->fetch_assoc();
+
+      $firstName = $buyerName['first_name'];
+      $lastName = $buyerName['last_name'];
     } ?>
 
 <?php if ($now > $end_time): ?>
@@ -121,7 +126,7 @@
      <!-- TODO: Print the result of the auction here? --> 
      <?php if ($sold){ ?>
       <p class="lead"><?=$title?> sold at £<?php echo(number_format($current_price, 2)) ?></p>
-      <p class="lead"><?=$title?> The winner was MHM User: <?php echo($winning_bid['user_id']) ?></p>
+      <p class="lead"><?=$title?> The winner was MHM User: <?php echo($firstName." ".$lastName) ?></p>
      <?php } else { ?>
       <p class="lead"><?=$title?> did not sell at £<?php echo(number_format($current_price, 2)) ?></p>
      <?php } ?>
@@ -131,7 +136,7 @@
         <p class="lead">Conditon: <?php echo($condition) ?></p>
         <p class="lead">Current bid: £<?php echo(number_format($current_price, 2)) ?></p>
         <?php if ($winning_bid){?>
-          <p class="lead"><?=$title?> The current winner is MHM User: <?php echo($winning_bid['user_id']) ?></p>
+          <p class="lead"><?=$title?> The current winner is MHM User: <?php echo($firstName." ".$lastName) ?></p>
         <?php } ?>
     <!-- Bidding form -->
     <form method="POST" action="place_bid.php">
