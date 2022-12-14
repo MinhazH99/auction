@@ -204,7 +204,7 @@ $bids_result = mysqli_query($connection, $count_bids_query)
   
         $title = $keyword_row[3];
         $description= $keyword_row[4];
-        $item_cond = $keyword_row[5]
+        $item_cond = $keyword_row[5];
         $current_price= $keyword_row[6]; #CHANGE THIS TO CURRENT
         $end_date= new DateTime($keyword_row[7]);
   
@@ -231,7 +231,7 @@ $bids_result = mysqli_query($connection, $count_bids_query)
   
         $title = $keyword_row[3];
         $description= $keyword_row[4];
-        $item_cond = $keyword_row[5]
+        $item_cond = $keyword_row[5];
         $current_price= $keyword_row[6]; #CHANGE THIS TO CURRENT
         $end_date= new DateTime($keyword_row[7]);
   
