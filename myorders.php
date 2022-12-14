@@ -33,7 +33,8 @@
   $current_date = "CURRENT_TIMESTAMP";
   
   
-  $count_bids_query = "SELECT bid_id,bid_price,bids.auction_id,bids.user_id,bids.bid_time,auctions.auction_id, auctions.item_name,auctions.item_desc,auctions.expirationDate,auctions.starting_price, COUNT(bids.bid_id) AS 'truenumbids' FROM bids
+  $count_bids_query = "SELECT bid_id,bid_price,bids.auction_id,
+  bids.user_id, bids.bid_time, auctions.auction_id, auctions.item_name, auctions.item_desc, auctions.expirationDate,auctions.starting_price,item_condition, COUNT(bids.bid_id) AS 'truenumbids' FROM bids,
   JOIN auctions ON auctions.auction_id = bids.auction_id
   WHERE $current_date > expirationDate
   AND bid_price = starting_price
@@ -106,9 +107,10 @@ else {
       $description= $keyword_row[7];
       $end_date= new DateTime($keyword_row[8]);
       $current_price= $keyword_row[9]; #CHANGE THIS TO CURRENT
-      $num_bids = $keyword_row[10];
+      $item_cond = $keyword_row[10];
+      $num_bids = $keyword_row[11];
       
-      print_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_date);
+      print_listing_li($item_id, $title, $description, $item_cond, $current_price, $num_bids, $end_date);
 
         }
       }
@@ -123,9 +125,10 @@ else {
       $description= $keyword_row[7];
       $end_date= new DateTime($keyword_row[8]);
       $current_price= $keyword_row[9]; #CHANGE THIS TO CURRENT
-      $num_bids = $keyword_row[10];
+      $item_cond = $keyword_row[10];
+      $num_bids = $keyword_row[11];
      
-      print_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_date);
+      print_listing_li($item_id, $title, $description, $item_cond, $current_price, $num_bids, $end_date);
          
           
         }
