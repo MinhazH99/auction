@@ -12,7 +12,7 @@
   }
 
   // TODO: Use auctionID to make a query to the database.
-  $query = "SELECT auctions.starting_price, auctions.expirationDate, auctions.reserve_price, auctions.item_name, auctions.item_desc, auctions.reserve_price, auctions.user_id FROM auctions WHERE auctions.auction_id = {$auctionID}";
+  $query = "SELECT auctions.starting_price, auctions.expirationDate, auctions.reserve_price, auctions.item_name, auctions.item_desc, auctions.reserve_price, auctions.user_id, auctions.item_condition FROM auctions WHERE auctions.auction_id = {$auctionID}";
   $resultObj = $connection->query($query);
   $row = $resultObj->fetch_assoc();
   
@@ -23,6 +23,7 @@
   
   $reserve_price = $row['reserve_price'];
   $seller_ID = $row['user_id'];
+  $condition = $row['item_condition'];
 
   // item details.
   $title = $row['item_name'];
@@ -127,6 +128,7 @@
 
 <?php else: ?>
      Auction ends <?php echo(date_format($end_time, 'j M H:i') . $time_remaining) ?></p>
+        <p class="lead">Conditon: <?php echo($condition) ?></p>
         <p class="lead">Current bid: £<?php echo(number_format($current_price, 2)) ?></p>
         <?php if ($winning_bid){?>
           <p class="lead"><?=$title?> The current winner is MHM User: <?php echo($winning_bid['user_id']) ?></p>
