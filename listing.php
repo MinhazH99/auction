@@ -5,24 +5,24 @@
 
 <?php
   // Get info from the URL:   
-  $item_id = $_GET['auction_id'];
-
-  if (!$item_id){
+  $auctionID = $_GET['auction_id'];
+  
+  if (!$auctionID){
     header("Location: browse.php");
-    echo 'This item_id does not exist';
   }
 
-  // TODO: Use item_id to make a query to the database.
-  $query = "SELECT auctions.starting_price, auctions.expirationDate, auctions.reserve_price, auctions.item_name, auctions.item_desc, auctions.reserve_price, auctions.user_id FROM auctions WHERE auctions.auction_id = {$item_id}";
+  // TODO: Use auctionID to make a query to the database.
+  $query = "SELECT auctions.starting_price, auctions.expirationDate, auctions.reserve_price, auctions.item_name, auctions.item_desc, auctions.reserve_price, auctions.user_id FROM auctions WHERE auctions.auction_id = {$auctionID}";
   $resultObj = $connection->query($query);
   $row = $resultObj->fetch_assoc();
-  $reserve_price = $row['reserve_price'];
-  $seller_ID = $row['user_id'];
-
+  
   if (!$row){
-    echo "item not found!";
+    header("Location: browse.php");
     die();
   }
+  
+  $reserve_price = $row['reserve_price'];
+  $seller_ID = $row['user_id'];
 
   // item details.
   $title = $row['item_name'];
@@ -57,7 +57,7 @@
   if(isset($_SESSION['user_id'])){
     $has_session = True;
     // $query = "SELECT "
-    $query = "SELECT CASE WHEN EXISTS ( SELECT * FROM `watch` WHERE `user_id` = {$_SESSION['user_id']} AND `auction_id` = {$item_id} ) THEN 'TRUE' ELSE 'FALSE' END AS 'watch_status'";
+    $query = "SELECT CASE WHEN EXISTS ( SELECT * FROM `watch` WHERE `user_id` = {$_SESSION['user_id']} AND `auction_id` = {$auctionID} ) THEN 'TRUE' ELSE 'FALSE' END AS 'watch_status'";
     $watch_status = $connection->query($query);
     $row = $watch_status->fetch_assoc();
 
@@ -104,7 +104,7 @@
     <p>
     
     <?php
-    $query = "SELECT `user_id` FROM `bids` WHERE auction_id = {$item_id} AND `bid_price` = {$current_price}";
+    $query = "SELECT `user_id` FROM `bids` WHERE auction_id = {$auctionID} AND `bid_price` = {$current_price}";
     $no_bids = $connection->query($query);
     $winning_bid = $no_bids->fetch_assoc();
   
@@ -113,26 +113,8 @@
     if ($winning_bid && (int) $reserve_price <= (int) $current_price){
       $sold = True;
         
-    }
+    } ?>
 
-    // $find_sellers_details = "SELECT `email`, `first_name` FROM `users` WHERE `user_id` IN ({$seller_ID}, {$buyer_id})";
-    // $find_seller_details = "SELECT `email`, `first_name` FROM `users` WHERE `user_id` = {$seller_ID}";
-    // $email_obj = $connection->query($find_seller_details);
-
-    // $row = $email_obj->fetch_assoc();
-    // $sellerEmail = $row['email'];
-    // $sellerName = $row['first_name'];
-    
-    // $find_buyer_details = "SELECT `email`, `first_name` FROM `users` WHERE `user_id` = {$winning_bid['user_id']}";
-    // $email_obj = $connection->query($find_buyer_details);
-
-    // if ($email_obj){
-    //   $row2 = $email_obj->fetch_assoc();
-    //   $buyerEmail = $row2['email'];
-    //   $buyerName = $row2['first_name'];  
-    // }
-    // ?>
-    
 <?php if ($now > $end_time): ?>
      This auction ended <?php echo(date_format($end_time, 'j M H:i')) ?>
      <!-- TODO: Print the result of the auction here? --> 
@@ -183,7 +165,7 @@ function addToWatchlist(button) {
   // Sends item ID as an argument to that function.
   $.ajax('watchlist_funcs.php', {
     type: "POST",
-    data: {functionname: 'add_to_watchlist', arguments: [<?php echo($item_id);?>]},
+    data: {functionname: 'add_to_watchlist', arguments: [<?php echo($auctionID);?>]},
 
     success: 
       function (obj, textstatus) {
@@ -215,7 +197,7 @@ function removeFromWatchlist(button) {
   // Sends item ID as an argument to that function.
   $.ajax('watchlist_funcs.php', {
     type: "POST",
-    data: {functionname: 'remove_from_watchlist', arguments: [<?php echo($item_id);?>]},
+    data: {functionname: 'remove_from_watchlist', arguments: [<?php echo($auctionID);?>]},
 
     success: 
       function (obj, textstatus) {
