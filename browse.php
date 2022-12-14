@@ -11,7 +11,7 @@
      (GET method of passing data to a page). -->
 <form method="get" action="browse.php"> <!-- form data sent as url variables, action is url of file that will process input -->
   <div class="row">
-    <div class="col-md-5 pr-0"> <!-- medium column -->
+    <div class="col-md-4 pr-0"> <!-- medium column -->
       <div class="form-group"> <!-- used for optimum spacing -->
         <label for="keyword" class="sr-only">Search keyword:</label> <!-- for screen readers only -->
 	    <div class="input-group"> <!-- helps enhance inputs, in this case with search icon in front of input (prepend) -->
@@ -24,7 +24,7 @@
         </div>
       </div>
     </div>
-    <div class="col-md-3 pr-0">
+    <div class="col-md-2 pr-0">
       <div class="form-group">
         <label for="cat" class="sr-only">Search within:</label> <!-- for screen readers only -->
         <select name="cat" class="form-control" id="cat">
@@ -37,6 +37,16 @@
         </select>
       </div>
     </div>
+    <div class="col-md-2 pr-0">
+      <div class="form-inline">
+        <label class="mx-2" for="condition">Condition:</label>
+        <select name="condition" class="form-control" id="condition">
+          <option selected value="all">All</option>
+          <option value="New">New</option>
+          <option value="Used">Used</option>
+        </select>
+      </div>
+    </div> 
     <div class="col-md-3 pr-0">
       <div class="form-inline">
         <label class="mx-2" for="order_by">Sort by:</label>
@@ -47,6 +57,7 @@
         </select>
       </div>
     </div>
+    
     <div class="col-md-1 px-0">
       <button type="submit" class="btn btn-primary">Search</button> <!-- button that says search, and submits query -->
     </div>
@@ -61,7 +72,7 @@
   $num_queries=1;
   $now = new DateTime();
   #isset checks whether the order_by variable has been set after it has been submitted using 'get'
-  if (!isset($_GET['order_by']) && !isset($_GET['keyword']) && !isset($_GET['cat'])) {
+  if (!isset($_GET['order_by']) && !isset($_GET['keyword']) && !isset($_GET['cat']) && !isset($_GET['condition'])) {
     $keyword = " ";
     
     $category = "all";
@@ -96,16 +107,26 @@
     $keyword = $_GET['keyword'];
     
   }
+  if(!isset($_GET['condition'])){
+
+    $item_cond = "all";
+  }
+  else {
+    $item_cond = $_GET['condition'];
+  }
+  
   if (!isset($_GET['cat'])) {
     $category = "all";
   }
 #isset checks whether the category variable has been set after it has been submitted using 'get'
   else if ($_GET['cat']=="all") {
     // TODO: Define behavior if a category has not been specified.
+    
     $category = "all";
     $connection = mysqli_connect('localhost','root','','auction')
     or die('Error connecting to MySQL server: ' . mysqli_error());
-  
+
+    if ($_GET['condition'] == "all") {
     $keyword_query = "SELECT auctions.auction_id, item_name, item_desc, item_condition, expirationDate, starting_price, COUNT(bids.bid_id) AS 'numbids'
     FROM auctions
     LEFT JOIN categories ON categories.category_id = auctions.category_id
@@ -118,7 +139,26 @@
     CASE WHEN '{$ordering}' = 'pricelow' THEN auctions.starting_price END ASC,
     CASE WHEN '{$ordering}' = 'pricehigh' THEN auctions.starting_price END DESC,
     CASE WHEN '{$ordering}' = 'date' THEN auctions.expirationDate END ASC";
+    }
 
+    else {
+      $item_cond = $_GET['condition'];
+  
+    $keyword_query = "SELECT auctions.auction_id, item_name, item_desc, item_condition, expirationDate, starting_price, COUNT(bids.bid_id) AS 'numbids'
+    FROM auctions
+    LEFT JOIN categories ON categories.category_id = auctions.category_id
+    LEFT JOIN bids ON bids.auction_id = auctions.auction_id
+    WHERE (INSTR(auctions.item_desc, TRIM(' ' FROM '{$keyword}')) 
+    OR INSTR(auctions.item_name, TRIM(' ' FROM '{$keyword}')) )> 0
+    AND expirationDate > CURRENT_DATE()
+    AND item_condition = '{$item_cond}'
+    GROUP BY auctions.auction_id
+    ORDER BY 
+    CASE WHEN '{$ordering}' = 'pricelow' THEN auctions.starting_price END ASC,
+    CASE WHEN '{$ordering}' = 'pricehigh' THEN auctions.starting_price END DESC,
+    CASE WHEN '{$ordering}' = 'date' THEN auctions.expirationDate END ASC";
+
+    }
     
 
     
@@ -127,7 +167,7 @@
     $category = $_GET['cat'];
     $connection = mysqli_connect('localhost','root','','auction')
     or die('Error connecting to MySQL server: ' . mysqli_error());
-  
+    if ($_GET['condition'] == "all") {
     $keyword_query = "SELECT auctions.auction_id, item_name, item_desc, item_condition, expirationDate, starting_price, COUNT(bids.bid_id) AS 'numbids'
     FROM auctions
     LEFT JOIN categories ON categories.category_id = auctions.category_id
@@ -141,7 +181,28 @@
     CASE WHEN '{$ordering}' = 'pricelow' THEN auctions.starting_price END ASC,
     CASE WHEN '{$ordering}' = 'pricehigh' THEN auctions.starting_price END DESC,
     CASE WHEN '{$ordering}' = 'date' THEN auctions.expirationDate END ASC";
+    }
+
+    else {
+
+      $item_cond = $_GET['condition'];
   
+    $keyword_query = "SELECT auctions.auction_id, item_name, item_desc, item_condition, expirationDate, starting_price, COUNT(bids.bid_id) AS 'numbids'
+    FROM auctions
+    LEFT JOIN categories ON categories.category_id = auctions.category_id
+    LEFT JOIN bids ON bids.auction_id = auctions.auction_id
+    WHERE categories.category_name = '{$category}'
+    AND (INSTR(auctions.item_desc, TRIM(' ' FROM '{$keyword}')) 
+    OR INSTR(auctions.item_name, TRIM(' ' FROM '{$keyword}')) )> 0
+    AND expirationDate > CURRENT_DATE()
+    AND item_condition = '{$item_cond}'
+    GROUP BY auctions.auction_id
+    ORDER BY 
+    CASE WHEN '{$ordering}' = 'pricelow' THEN auctions.starting_price END ASC,
+    CASE WHEN '{$ordering}' = 'pricehigh' THEN auctions.starting_price END DESC,
+    CASE WHEN '{$ordering}' = 'date' THEN auctions.expirationDate END ASC";
+
+    }
     
     
   }
