@@ -84,7 +84,8 @@
     or die('Error connecting to MySQL server: ' . mysqli_error());
     $user_id = $_SESSION['user_id'];
   
-    $keyword_query = "SELECT bids.user_id, auctions.auction_id, item_name, item_desc, expirationDate, bid_price, bid_time, starting_price
+    $keyword_query = "SELECT bids.user_id, auctions.auction_id, item_name, 
+    item_desc, expirationDate, bid_price, bid_time, starting_price
     FROM auctions, categories, bids
     WHERE categories.category_id = auctions.category_id
     AND bids.auction_id = auctions.auction_id
@@ -94,12 +95,11 @@
     CASE WHEN '{$ordering}' = 'date' THEN bids.bid_time END ASC
     ";
 
-
-    $count_bids_query = "SELECT auctions.auction_id, bids.user_id, COUNT(bids.bid_id) AS 'truenumbids'
+    $count_bids_query = "SELECT auctions.auction_id, bids.user_id, 
+    COUNT(bids.bid_id) AS 'truenumbids'
     FROM auctions, categories, bids
     WHERE categories.category_id = auctions.category_id
     AND bids.auction_id = auctions.auction_id
-    
     GROUP BY auctions.auction_id";
   }
 
@@ -117,7 +117,8 @@
     or die('Error connecting to MySQL server: ' . mysqli_error());
     $user_id = $_SESSION['user_id'];
     $category = "all";
-    $keyword_query = "SELECT bids.user_id, auctions.auction_id, item_name, item_desc, expirationDate, bid_price, bid_time, starting_price
+    $keyword_query = "SELECT bids.user_id, auctions.auction_id, item_name, 
+    item_desc, expirationDate, bid_price, bid_time, starting_price
     FROM auctions, categories, bids
     WHERE categories.category_id = auctions.category_id
     AND bids.auction_id = auctions.auction_id
@@ -130,11 +131,11 @@
     CASE WHEN '{$ordering}' = 'bidold' THEN bids.bid_time END ASC,
     CASE WHEN '{$ordering}' = 'bidnew' THEN bids.bid_time END DESC";
 
-    $count_bids_query = "SELECT auctions.auction_id, bids.user_id, COUNT(bids.bid_id) AS 'truenumbids'
+    $count_bids_query = "SELECT auctions.auction_id, bids.user_id, 
+    COUNT(bids.bid_id) AS 'truenumbids'
     FROM auctions, categories, bids
     WHERE categories.category_id = auctions.category_id
     AND bids.auction_id = auctions.auction_id
-    
     GROUP BY auctions.auction_id";
 
   
