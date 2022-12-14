@@ -86,7 +86,7 @@
     LEFT JOIN bids ON bids.auction_id = auctions.auction_id
     WHERE (INSTR(auctions.item_desc, TRIM(' ' FROM '{$keyword}')) 
     OR INSTR(auctions.item_name, TRIM(' ' FROM '{$keyword}')) )> 0
-    AND expirationDate > CURRENT_DATE()
+    AND expirationDate > CURRENT_TIMESTAMP()
     GROUP BY auctions.auction_id
     ORDER BY categories.category_id ASC";
 
@@ -133,7 +133,7 @@
     LEFT JOIN bids ON bids.auction_id = auctions.auction_id
     WHERE (INSTR(auctions.item_desc, TRIM(' ' FROM '{$keyword}')) 
     OR INSTR(auctions.item_name, TRIM(' ' FROM '{$keyword}')) )> 0
-    AND expirationDate > CURRENT_DATE()
+    AND expirationDate > CURRENT_TIMESTAMP()
     GROUP BY auctions.auction_id
     ORDER BY 
     CASE WHEN '{$ordering}' = 'pricelow' THEN auctions.starting_price END ASC,
@@ -150,7 +150,7 @@
     LEFT JOIN bids ON bids.auction_id = auctions.auction_id
     WHERE (INSTR(auctions.item_desc, TRIM(' ' FROM '{$keyword}')) 
     OR INSTR(auctions.item_name, TRIM(' ' FROM '{$keyword}')) )> 0
-    AND expirationDate > CURRENT_DATE()
+    AND expirationDate > CURRENT_TIMESTAMP()
     AND item_condition = '{$item_cond}'
     GROUP BY auctions.auction_id
     ORDER BY 
@@ -175,7 +175,7 @@
     WHERE categories.category_name = '{$category}'
     AND (INSTR(auctions.item_desc, TRIM(' ' FROM '{$keyword}')) 
     OR INSTR(auctions.item_name, TRIM(' ' FROM '{$keyword}')) )> 0
-    AND expirationDate > CURRENT_DATE()
+    AND expirationDate > CURRENT_TIMESTAMP()
     GROUP BY auctions.auction_id
     ORDER BY 
     CASE WHEN '{$ordering}' = 'pricelow' THEN auctions.starting_price END ASC,
@@ -194,7 +194,7 @@
     WHERE categories.category_name = '{$category}'
     AND (INSTR(auctions.item_desc, TRIM(' ' FROM '{$keyword}')) 
     OR INSTR(auctions.item_name, TRIM(' ' FROM '{$keyword}')) )> 0
-    AND expirationDate > CURRENT_DATE()
+    AND expirationDate > CURRENT_TIMESTAMP()
     AND item_condition = '{$item_cond}'
     GROUP BY auctions.auction_id
     ORDER BY 
