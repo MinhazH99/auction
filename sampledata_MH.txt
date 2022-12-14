@@ -35,7 +35,7 @@ INSERT INTO `auctions` (`auction_id`, `item_name`, `item_desc`,`item_condition`,
 INSERT INTO `auctions` (`auction_id`, `item_name`, `item_desc`,`item_condition`, `starting_price`, `reserve_price`, `expirationDate`,`watch_id`, `category_id`, `user_id`) VALUES ('11', 'Light Dumbells', 'Light Dumbells (5kg-10kg)','New', '100', '110', '2022-11-30 02:15:32',NULL,'2', '2');
 INSERT INTO `auctions` (`auction_id`, `item_name`, `item_desc`,`item_condition`, `starting_price`, `reserve_price`, `expirationDate`,`watch_id`, `category_id`, `user_id`) VALUES ('12', 'Heavy Dumbells', 'Heavy Dumbells (10kg-20kg)','New', '150', '200', '2022-11-30 02:15:32',NULL,'2', '2');
 
---Clothes
+-- Clothes
 
 INSERT INTO `auctions` (`auction_id`, `item_name`, `item_desc`,`item_condition`, `starting_price`, `reserve_price`, `expirationDate`,`watch_id`, `category_id`, `user_id`) VALUES ('16', 'Nike Coat', 'New waterproof coat','Used', '150', '200', '2022-12-30 02:15:32',NULL,'1', '2');
 INSERT INTO `auctions` (`auction_id`, `item_name`, `item_desc`,`item_condition`, `starting_price`, `reserve_price`, `expirationDate`,`watch_id`, `category_id`, `user_id`) VALUES ('17', 'Jordans Shoes', 'New Jordans shoes','New', '200', '210', '2022-12-30 02:15:32',NULL, '1', '2');
