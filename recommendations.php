@@ -210,7 +210,7 @@ $bids_result = mysqli_query($connection, $count_bids_query)
         $num_bids = $keyword_row[7];
 
   
-        print_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_date);
+        print_recom_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_date);
         
         }
            
@@ -227,7 +227,7 @@ $bids_result = mysqli_query($connection, $count_bids_query)
         $item_id= $keyword_row[1];
         $category = $keyword_row[2];
         
-  
+        
         $title = $keyword_row[3];
         $description= $keyword_row[4];
         $current_price= $keyword_row[5]; #CHANGE THIS TO CURRENT
@@ -236,7 +236,7 @@ $bids_result = mysqli_query($connection, $count_bids_query)
         $num_bids = $keyword_row[7];
 
   
-        print_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_date);
+        print_recom_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_date);
      
             
           }
