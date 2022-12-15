@@ -45,5 +45,7 @@ foreach ($auctions_obj as $auction){
     $updateQuery = "UPDATE `auctions` SET `auction_email` = '1' WHERE auctions.expirationDate < {$current_date} AND `auction_email`= 0";
     $action = $connection->query($updateQuery);
     
+    $connection->close();
+
 }
 ?>

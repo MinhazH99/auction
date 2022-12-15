@@ -71,7 +71,7 @@ function buyer_email($itemName, $email, $firstName, $secondName){
     $mail->send();
 }
 
-function seller_email($itemName, $email, $firstName, $secondName) {
+function seller_email($itemName, $email, $firstName, $secondName, $bidPrice) {
     $mail = new PHPMailer(true);
 
     $mail -> isSMTP();
@@ -88,7 +88,7 @@ function seller_email($itemName, $email, $firstName, $secondName) {
 
     $mail -> isHTML(true);
     $mail -> Subject = $itemName." has sold!";
-    $mail -> Body = "Hey ".$firstName." ".$secondName.",<br><br> The auction for <a href='http://localhost/auction/listing.php?auction_id=".$auctionID."'> $itemName </a> has sold! <br><br>
+    $mail -> Body = "Hey ".$firstName." ".$secondName.",<br><br>'> $itemName </a> has sold! <br><br>
         The latest price was ".$bidPrice.".     
         <br><br>
         Kind regards,

@@ -31,6 +31,8 @@ else if ($_POST['functionname'] == "remove_from_watchlist") {
   $res = "success";
 }
 
+$connection->close();
+
 echo $res;
 
 ?>

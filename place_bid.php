@@ -73,4 +73,6 @@ if ($current_price < $bid_price){
     header("refresh:3;'listing.php?auction_id=".$auctionID);
 }
 
+$connection->close();
+
 ?>

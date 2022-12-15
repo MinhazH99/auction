@@ -113,13 +113,15 @@
     
     if ($winning_bid && (int) $reserve_price <= (int) $current_price){
       $sold = True;
+    } 
+    if ($winning_bid) {
       $query = "SELECT `first_name`, `last_name`  FROM `users` WHERE `user_id` = {$winning_bid['user_id']}";
       $action = $connection->query($query);
       $buyerName = $action->fetch_assoc();
 
       $firstName = $buyerName['first_name'];
       $lastName = $buyerName['last_name'];
-    } ?>
+    }?>
 
 <?php if ($now > $end_time): ?>
      This auction ended <?php echo(date_format($end_time, 'j M H:i')) ?>
@@ -157,7 +159,7 @@
 
 </div> <!-- End of row #2 -->
 
-<?php $resultObj->close(); ?>
+<?php $connection->close(); ?>
 
 <?php include_once("footer.php")?>
 
