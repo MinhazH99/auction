@@ -88,7 +88,7 @@
               </div>
               <input type="number" class="form-control" id="auctionReservePrice" name = "reserve_price">
             </div>
-            <small id="reservePriceHelp" class="form-text text-muted">Optional. Auctions that end below this price will not go through. This value is not displayed in the auction listing.</small>
+            <small id="reservePriceHelp" class="form-text text-muted"><span class="text-danger">* Required.</span> Auctions that end below this price will not go through. This value is not displayed in the auction listing.</small>
           </div>
         </div>
         <div class="form-group row">
