@@ -130,17 +130,18 @@ $bids_result = mysqli_query($connection, $count_bids_query)
  
  $keyword_query = "SELECT bids.user_id, auctions.auction_id, 
   category_name, item_name, item_desc, item_condition,
-  starting_price,expirationDate, COUNT(bids.bid_id) AS 'numbids'
+  starting_price,expirationDate
   
   
   FROM auctions, categories, bids
   WHERE categories.category_id = auctions.category_id
   AND bids.auction_id = auctions.auction_id
   AND auctions.user_id != $user_id
-  AND expirationDate > CURRENT_DATE()
+  AND expirationDate > CURRENT_TIMESTAMP()
 
   AND bids.user_id IN (SELECT user_id FROM bids WHERE auction_id IN 
-  (SELECT auction_id FROM bids WHERE user_id = $user_id))
+  (SELECT auction_id FROM bids WHERE user_id = $user_id)
+  )
 
   AND categories.category_id IN (SELECT categories.category_id
   FROM auctions, categories, bids
@@ -155,8 +156,14 @@ $bids_result = mysqli_query($connection, $count_bids_query)
   AND bids.auction_id = auctions.auction_id
   AND bids.user_id = $user_id
   GROUP BY bids.bid_id)
-  GROUP BY auctions.auction_id
+  GROUP BY auctions.auction_id";
 
+  $count_bids_query = "SELECT auctions.auction_id, bids.user_id, 
+    COUNT(bids.bid_id) AS 'truenumbids'
+    FROM auctions, categories, bids
+    WHERE categories.category_id = auctions.category_id
+    AND bids.auction_id = auctions.auction_id
+    GROUP BY auctions.auction_id
   ";
 /*
   
@@ -172,7 +179,9 @@ $bids_result = mysqli_query($connection, $count_bids_query)
    $keyword_result = mysqli_query($connection, $keyword_query) 
    or die('Error making select users query: '. mysqli_error($connection));
 
- 
+   $bids_result = mysqli_query($connection, $count_bids_query)
+   or die('Error making select users query: '. mysqli_error($connection));
+
   $num_queries = mysqli_num_rows($keyword_result);
   $results_per_page = 10;
 
@@ -205,7 +214,17 @@ $bids_result = mysqli_query($connection, $count_bids_query)
   }
   
 // This uses a function defined in utilities.php
- 
+ $auction_id = array();
+$true_bids = array();
+
+while ($row = mysqli_fetch_array($bids_result))
+  {
+    $auction_id[] = $row['auction_id'];
+  $true_bids[] = $row['truenumbids'];
+  
+}
+
+$num_auctions = count($auction_id);
   
 
   if ($num_queries > 0){
@@ -224,16 +243,23 @@ $bids_result = mysqli_query($connection, $count_bids_query)
         $current_price= $keyword_row[6]; #CHANGE THIS TO CURRENT
         $end_date= new DateTime($keyword_row[7]);
   
-        $num_bids = $keyword_row[8];
+        
 
-  
-        print_listing_li($item_id, $title, $description, $item_cond, $current_price, $num_bids, $end_date);
+        for ($num = 0; $num < $num_auctions; $num++){
+          if ($auction_id[$num] == $item_id){
+            $num_bids = $true_bids[$num];
+            print_listing_li($item_id, $title, $description, $item_cond, $current_price, $num_bids, $end_date);
+          }
+          else {
+            continue;
+          }
+        
         
         }
            
         
           }
-        #}
+        }
     else{
       
       for ($count = ($curr_page-1)*$results_per_page; $count<$num_queries;$count++){
@@ -251,18 +277,23 @@ $bids_result = mysqli_query($connection, $count_bids_query)
         $current_price= $keyword_row[6]; #CHANGE THIS TO CURRENT
         $end_date= new DateTime($keyword_row[7]);
   
-        $num_bids = $keyword_row[8];
-
+        for ($num = 0; $num < $num_auctions; $num++){
+          if ($auction_id[$num] == $item_id){
+            $num_bids = $true_bids[$num];
+            print_listing_li($item_id, $title, $description, $item_cond, $current_price, $num_bids, $end_date);
+          }
+          else {
+            continue;
+          }
   
-        print_listing_li($item_id, $title, $description, $item_cond, $current_price, $num_bids, $end_date);
-     
+        
             
           }
   
     }
     
   }
- 
+}
 
   if ($num_queries==0){
     $max_page = 1;
